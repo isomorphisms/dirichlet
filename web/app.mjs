@@ -104,6 +104,18 @@ function render() {
   gl.uniform1i(uniforms.cutoff,cutoff());
   gl.uniform1i(uniforms.prime,prime());
   gl.drawArrays(gl.TRIANGLES,0,3);
+  // Opt-in proof of actual browser draw and readback (not Android evidence).
+  if (new URLSearchParams(location.search).get('smoke') === '1') {
+    const pixel = new Uint8Array(4);
+    gl.readPixels(Math.floor(width/2),Math.floor(height/2),1,1,
+      gl.RGBA,gl.UNSIGNED_BYTE,pixel);
+    const error=gl.getError();
+    if (error===gl.NO_ERROR && pixel[3]===255 &&
+        pixel[0]+pixel[1]+pixel[2]>40)
+      status.dataset.smokePixel=[...pixel].join(',');
+    else status.textContent='WebGL2 pixel readback failed: '+error+
+      ', pixel '+[...pixel].join(',');
+  }
 }
 function worldFromScreen(point) {
   const r=canvas.getBoundingClientRect();
