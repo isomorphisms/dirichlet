@@ -110,3 +110,40 @@ Do not silently copy Wegert's GPL-3.0-or-later color code into this initially un
 4. chi4(3)=-1; chi4(2)=0; local(3,2)=9/10.
 5. Reject misuse of Euler products as critical-strip approximations.
 6. Any claimed GPU acceptance must capture the selected, running shader and device renderer, not merely a plausible rendering or passing generated tests.
+
+## Interactive Wegert controls (draft)
+
+The unmerged [WebGL2 viewer](web/index.html) evaluates **finite mathematics** and passes
+the resulting complex number to Wegert's actual GPL-3.0-or-later phase/log-modulus
+color core. The viewer fetches the source at runtime from
+[Wegert revision 873d03e](https://github.com/isomorphismes/wegert/blob/873d03e86ec2e4a9236bb2d253fee3c8fde83b6c/code/wegert_color.glsl).
+No copy of Wegert GLSL is embedded in this unlicensed repository.
+
+To run: serve the repository root with a local HTTP server such as
+Python 3's http.server on port 8000, then visit http://localhost:8000/web/.
+The first page load needs network access to the pinned Wegert source.
+WebGL2 is required; there is no misleading CPU substitute.
+
+Controls: finite geometric G(N,q), single chi4 Euler factor, finite chi4
+Dirichlet sum, or finite chi4 Euler product; N/P/prime selectors; drag/pan,
+pinch/scroll zoom, point probing, and camera reset. Switching among s-plane
+models preserves camera; switching q-plane to s-plane resets it.
+
+The maintained scalar reference is code/dirichlet_eval.c (C11 complex),
+with a parallel JS probe evaluator in web/eval.mjs. Independent tests:
+
+    cc -std=c11 -Wall -Wextra -Werror -pedantic code/dirichlet_eval.c tests/dirichlet_host.c -lm -o /tmp/dirichlet-host
+    /tmp/dirichlet-host
+    node --test tests/eval.test.mjs
+
+These models are deliberately distinct. G(N,1)=N without a pole. The
+chi4 Dirichlet series converges to L(s,chi4) for Re(s)>0 (absolutely for
+Re(s)>1); the Euler product represents L(s,chi4) in Re(s)>1.
+Finite prime products outside this half-plane are not analytic continuation.
+
+**Still unqualified:** no physical MIRO A1 shader selection, CPU/GPU
+grid agreement, APK, ICK build, verified proof, or independent ai-ci
+acceptance. The direct loading of GPL Wegert code is explicit; any
+combined offline or bundled distribution needs licensing resolved.
+Flexible Pipes #72 is a tracking issue, not a dispatched job receipt.
+Do not merge/release until the actual work-control gate accepts it.
