@@ -63,9 +63,17 @@
         <label for="model">Function</label>
         <select id="model">
           <option value="0">Finite geometric sum G(N,q)</option>
-          <option value="1">Single χ₄ Euler factor</option>
-          <option value="2">Finite χ₄ Dirichlet sum</option>
-          <option value="3">Finite χ₄ Euler product</option>
+          <option value="1">Single character Euler factor</option>
+          <option value="2">Finite weighted Dirichlet sum</option>
+          <option value="3">Finite weighted Euler product</option>
+        </select>
+      </div>
+      <div class="control" id="character-row" hidden>
+        <label for="character">Coefficient weights χ(n)</label>
+        <select id="character">
+          <option value="4">χ₄ · modulo 4 (default)</option>
+          <option value="3">χ₃ · modulo 3</option>
+          <option value="1">χ₁ · constant 1 (zeta)</option>
         </select>
       </div>
       <div class="control" id="cutoff-row">
@@ -75,22 +83,25 @@
       <div class="control" id="prime-row" hidden>
         <label for="prime">Prime p</label>
         <select id="prime">
-          <option value="3">3 (χ₄(p) = −1)</option>
-          <option value="5">5 (χ₄(p) = +1)</option>
-          <option value="7">7 (χ₄(p) = −1)</option>
-          <option value="11">11 (χ₄(p) = −1)</option>
-          <option value="13">13 (χ₄(p) = +1)</option>
-          <option value="17">17 (χ₄(p) = +1)</option>
-          <option value="19">19 (χ₄(p) = −1)</option>
-          <option value="23">23 (χ₄(p) = −1)</option>
-          <option value="29">29 (χ₄(p) = +1)</option>
-          <option value="31">31 (χ₄(p) = −1)</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="5">5</option>
+          <option value="7">7</option>
+          <option value="11">11</option>
+          <option value="13">13</option>
+          <option value="17">17</option>
+          <option value="19">19</option>
+          <option value="23">23</option>
+          <option value="29">29</option>
+          <option value="31">31</option>
         </select>
       </div>
       <button id="reset" type="button">Reset camera</button>
       <section class="readout" aria-live="polite">
         <span class="key">Expression</span><p id="formula"></p>
         <span class="key">Mathematical domain</span><p id="scope"></p>
+        <span class="key" id="weight-key" hidden>First 12 coefficient weights</span>
+        <p id="weight-preview" hidden></p>
         <span class="key">Point probe</span><p id="probe"></p>
       </section>
       <p id="status" role="status">Loading pinned Wegert color core…</p>
