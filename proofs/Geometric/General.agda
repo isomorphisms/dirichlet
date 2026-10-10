@@ -50,7 +50,7 @@ module OverCommutativeRing {c ℓ} (R : CommutativeRing c ℓ) where
     1# + ((- term) + (term + (- (ratio * term))))
       ≈⟨ +-congˡ (sym (+-assoc (- term) term (- (ratio * term)))) ⟩
     1# + (((- term) + term) + (- (ratio * term)))
-      ≈⟨ +-congˡ (+-congʳ (+-inverseˡ term)) ⟩
+      ≈⟨ +-congˡ (+-congʳ (-‿inverseˡ term)) ⟩
     1# + (0# + (- (ratio * term)))
       ≈⟨ +-congˡ (+-identityˡ (- (ratio * term))) ⟩
     1# + (- (ratio * term))
@@ -67,7 +67,7 @@ module OverCommutativeRing {c ℓ} (R : CommutativeRing c ℓ) where
     (1# - ratio) * 0#
       ≈⟨ zeroʳ (1# - ratio) ⟩
     0#
-      ≈⟨ sym (+-inverseʳ 1#) ⟩
+      ≈⟨ sym (-‿inverseʳ 1#) ⟩
     1# - 1#
       ≈⟨ refl ⟩
     1# - power ratio zero
