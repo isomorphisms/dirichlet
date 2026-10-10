@@ -16,13 +16,13 @@ bottom-navigation layout, and its analytically continued L-function shader.
 ## Ready for consumption
 
 - code/dirichlet_view.h and .c: portable C11 controls. Geometric G(N,q),
-  one chi4 local Euler factor, finite chi4 sum, finite chi4 Euler product.
+  one local Euler factor, finite character-weighted sum, finite Euler product.
 - Controls supply u_center, u_half_height, u_aspect, u_model,
-  u_cutoff, and u_prime, exactly matching web/dirichlet.frag.in.
+  u_cutoff, u_prime, and u_character, exactly matching web/dirichlet.frag.in.
 - Changing q-plane ↔ s-plane resets the view, while changing among s-plane
   evaluators preserves pan and zoom. Zoom preserves the point under a touch.
 - Cutoffs are bounded (32/127/31 respectively); invalid primes and invalid
-  dimensions fail closed. No dummy poles/zeros are introduced.
+  dimensions and character selections fail closed. No dummy poles/zeros are introduced.
 - Host control tests do not need NDK headers, EGL, or an Android device.
 
 ## Native integration remaining
@@ -31,7 +31,7 @@ bottom-navigation layout, and its analytically continued L-function shader.
    an unrelated Android/Java control pipeline. Preserve its object/gesture
    behavior for L itself; do not relabel the three LMFDB neighbor chips.
 2. Use a separate Dirichlet target/application identity with four function
-   choices, a cutoff adjustment, prime selection, pan, pinch, and probe.
+   choices, a cutoff adjustment, prime and character selection, pan, pinch, and probe.
    The NativeActivity should read the portable view struct and pass its
    uniforms to the real compiled/linked Dirichlet shader program.
 3. At build time assemble the GPL-3.0-or-later Wegert color shader from its
