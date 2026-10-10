@@ -124,8 +124,8 @@ Python 3's http.server on port 8000, then visit http://localhost:8000/web/.
 The first page load needs network access to the pinned Wegert source.
 WebGL2 is required; there is no misleading CPU substitute.
 
-Controls: finite geometric G(N,q), single chi4 Euler factor, finite chi4
-Dirichlet sum, or finite chi4 Euler product; N/P/prime selectors; drag/pan,
+Controls: finite geometric G(N,q), a selected character's Euler factor,
+finite Dirichlet sum, or finite Euler product; character/N/P/prime selectors; drag/pan,
 pinch/scroll zoom, point probing, and camera reset. Switching among s-plane
 models preserves camera; switching q-plane to s-plane resets it.
 
@@ -158,9 +158,10 @@ using four byte-encoded color channels per component. The reader
 decodes actual GLSL numbers; screenshot colors are not treated as
 numerical evidence.
 
-A reproducible 81-case grid (tests/numeric-cases.mjs) covers all four
-models: N=0, G(4,1), roots of unity, both chi4 character signs, primes
-including 2, moving cutoffs, and complex coordinates. A separately
+A reproducible 141-case grid (tests/numeric-cases.mjs) retains all original
+81 chi4 cases and adds 60 non-default-character cases across local factors,
+finite Dirichlet sums and Euler products. It includes ±i coefficients,
+principal characters, primes including 2, and complex coordinates. A separately
 implemented C11 evaluator must match the JavaScript evaluator to
 scaled error below 2e-11; running WebGL2 shader values must agree
 within absolute error 0.0002 + 0.0003 times the reference modulus.
@@ -188,3 +189,49 @@ preserves the camera anchor during pan/pinch without any Android or
 OpenGL dependency. See ANDROID.md for the inspected L NativeActivity
 reuse boundary, the ABI, outstanding licensing, and physical-device
 acceptance. This is not a built or qualified APK.
+
+## Explicit Dirichlet characters (draft implementation)
+
+The seven choices below are actual multiplicative, periodic Dirichlet
+characters, **not modular-form weights**. A nebentypus may be a Dirichlet
+character in a separate modular-form context, but no modular-form
+constructors or weight semantics are added here.
+
+| Character | Modulus | Nonzero residues and values |
+| --- | ---: | --- |
+| χ₄ | 4 | χ(1)=1; χ(3)=−1 |
+| χ₃ | 3 | χ(1)=1; χ(2)=−1 |
+| χ₅⁺ | 5 | χ(1)=1; χ(2)=i; χ(3)=−i; χ(4)=−1 |
+| χ₅⁻ | 5 | χ(1)=1; χ(2)=−i; χ(3)=i; χ(4)=−1 |
+| χ₈ | 8 | χ(1)=1; χ(3)=−1; χ(5)=−1; χ(7)=1 |
+| χ₀,₄ (principal) | 4 | χ(odd)=1; χ(even)=0 |
+| χ₁ (principal) | 1 | χ(n)=1 for all integers n |
+
+Entries on non-units vanish for moduli greater than 1. The coefficients
+are represented exactly as Gaussian integers 0, ±1, ±i; this finite
+catalogue is **not** a generic construction of characters for all moduli.
+The C11 and JS suites independently test χ(1)=1, unit support,
+periodicity and complete multiplicativity on *every* pair of residue
+classes. That checks the tables, not a general mathematical proof in
+Idriç or Agda.
+
+The evaluator uses χ(n)n^(−s) in bounded sums and
+(1−χ(p)p^(−s))^(−1) in bounded Euler products, preserving complex values.
+Original χ₄ entry points remain supported. A nonprincipal character's
+infinite Dirichlet series converges for Re(s)>0 (absolutely for Re(s)>1).
+For principal characters the unmodified Dirichlet series converges for
+Re(s)>1 and L(s,χ) has a pole at s=1. In all cases the *infinite*
+Euler-product identity is justified in Re(s)>1. The finite evaluators
+work elsewhere but do **not** analytically continue L(s,χ).
+
+View code and tests:
+- `code/dirichlet_eval.[ch]`, `web/eval.mjs`, `web/dirichlet.frag.in`
+- `tests/dirichlet_host.c`, `tests/eval.test.mjs`
+- `tests/numeric-cases.mjs` (C11 ↔ JS ↔ running WebGL2 shader)
+
+The portable GLES uniform interface adds `u_character`; an Android host
+must bind it, and existing Android-source-only limitations still apply.
+No general character-group enumeration, Idriç character theorem, global
+L-function analytic continuation, device acceptance, or release is
+claimed. Keep this stacked draft unmerged pending trustworthy Flexible
+Pipes delivery and separate ai-ci acceptance.
