@@ -2,7 +2,7 @@ module GeometricFinite
 
 -- Idriç implementation surface. This is a runnable mathematical definition,
 -- not a complete formal proof of the quantified theorem. The universally
--- quantified identity is proved independently in Agda/Geometric/Finite.agda.
+-- quantified identity is proved independently in proofs/Geometric/Finite.agda.
 -- These witnesses are concrete normalization cases, not proof by testing.
 
 public export
