@@ -178,3 +178,13 @@ node tests/cpu-grid.mjs. For real shader execution run
 bash tests/browser-smoke.sh; it also records four normal browser
 portraits. This remains separate from proof checking and full L-function
 analytic continuation.
+
+## Native-control integration seam
+
+The portable C11 camera/control state in code/dirichlet_view.c and
+code/dirichlet_view.h supplies the same six GLSL uniforms used by the
+WebGL2 viewer. It validates bounded mode/cutoff/prime transitions and
+preserves the camera anchor during pan/pinch without any Android or
+OpenGL dependency. See ANDROID.md for the inspected L NativeActivity
+reuse boundary, the ABI, outstanding licensing, and physical-device
+acceptance. This is not a built or qualified APK.

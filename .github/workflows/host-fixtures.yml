@@ -16,6 +16,11 @@ jobs:
           cc -std=c11 -O2 -Wall -Wextra -Werror -pedantic \
             code/dirichlet_eval.c tests/dirichlet_host.c -lm -o /tmp/dirichlet-host
           /tmp/dirichlet-host
+      - name: Test portable Android GLES uniform/control state on C11 host
+        run: |
+          cc -std=c11 -O2 -Wall -Wextra -Werror -pedantic \
+            code/dirichlet_view.c tests/dirichlet-view.c -lm -o /tmp/dirichlet-view
+          /tmp/dirichlet-view
       - name: Run JavaScript numerical fixtures
         run: node --test tests/eval.test.mjs
       - name: Compare independent C11 and JavaScript evaluators on 81 grid samples
