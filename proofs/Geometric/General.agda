@@ -10,7 +10,7 @@ open import Data.Nat.Base using (ℕ; zero; suc)
 
 module OverCommutativeRing {c ℓ} (R : CommutativeRing c ℓ) where
 
-  open CommutativeRing R
+  open CommutativeRing R hiding (zero)
   open import Relation.Binary.Reasoning.Setoid setoid
   open import Algebra.Properties.Ring ring using (-‿distribˡ-*)
 
