@@ -78,7 +78,7 @@ module OverRing {c ℓ} (R : CommutativeRing c ℓ) where
     finite-local-product (ratio ∷ rest) cutoff
       ≈⟨ refl ⟩
     geometric ratio cutoff * finite-local-product rest cutoff
-      ≈⟨ *-congʳ (finite-product-expands rest cutoff) ⟩
+      ≈⟨ *-congˡ (finite-product-expands rest cutoff) ⟩
     geometric ratio cutoff * exponent-expanded rest cutoff
       ≈⟨ sym (scaled-geometric-factor ratio cutoff
                    (exponent-expanded rest cutoff)) ⟩
