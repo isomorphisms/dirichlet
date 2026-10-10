@@ -1,0 +1,22 @@
+name: Dirichlet host fixtures (not GPU/device qualification)
+on:
+  push:
+    branches:
+      - main
+      - 'work/**'
+  pull_request:
+
+jobs:
+  host-fixtures:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build and run independent C fixtures
+        run: |
+          cc -std=c11 -O2 -Wall -Wextra -Werror -pedantic \
+            code/dirichlet_eval.c tests/dirichlet_host.c -lm -o /tmp/dirichlet-host
+          /tmp/dirichlet-host
+      - name: Run JavaScript numerical fixtures
+        run: node --test tests/eval.test.mjs
+      - name: Check browser JavaScript syntax
+        run: node --check web/app.mjs
