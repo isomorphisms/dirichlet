@@ -10,6 +10,7 @@ const canvas = byId("portrait"), modelInput = byId("model");
 const cutoffInput = byId("cutoff"), cutoffRow = byId("cutoff-row");
 const primeInput = byId("prime"), primeRow = byId("prime-row");
 const characterInput = byId("character"), characterRow = byId("character-row");
+const weightPreview = byId("weight-preview"), weightKey = byId("weight-key");
 const cutoffLabel = byId("cutoff-label"), cutoffValue = byId("cutoff-value");
 const formula = byId("formula"), scope = byId("scope");
 const probe = byId("probe"), status = byId("status"), plane = byId("plane");
@@ -30,6 +31,9 @@ const prime = () => Number(primeInput.value);
 const character = () => Number(characterInput.value);
 const characterLabel = () => ({1:"χ₁",3:"χ₃",4:"χ₄"})[character()];
 function updatePrimeLabels() {
+  weightPreview.textContent = characterLabel() + "(n), n=1…12: " +
+    Array.from({length:12},(_,i)=>characterWeight(character(),i+1))
+      .map(c=>c===1?"+1":(c===-1?"−1":"0")).join(", ");
   for (const option of primeInput.options) {
     const p = Number(option.value), c = characterWeight(character(),p);
     option.textContent = p + " (" + characterLabel() + "(" + p + ") = " +
@@ -95,6 +99,7 @@ function chooseModel() {
   const m=model(), spec=specs[m];
   cutoffRow.hidden=m===1; primeRow.hidden=m!==1;
   characterRow.hidden=m===0;
+  weightPreview.hidden=m===0; weightKey.hidden=m===0;
   updatePrimeLabels();
   cutoffInput.min=String(spec.min); cutoffInput.max=String(spec.max);
   cutoffInput.value=String(spec.initial);
