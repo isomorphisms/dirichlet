@@ -225,7 +225,18 @@ async function initialize() {
 if (gl) canvas.addEventListener("webglcontextlost",e=>{
   e.preventDefault();program=null;status.textContent="WebGL2 context lost.";
 });
+// Optional reproducible initial model/cutoff for the browser smoke and sharing.
+const initial = new URLSearchParams(location.search);
+if (['0','1','2','3'].includes(initial.get('model')))
+  modelInput.value = initial.get('model');
 chooseModel();
+if (initial.has('prime') && [...primeInput.options].some(o=>o.value===initial.get('prime')))
+  primeInput.value=initial.get('prime');
+if (initial.has('cutoff') && Number.isInteger(Number(initial.get('cutoff')))) {
+  const n=clamp(Number(initial.get('cutoff')),specs[model()].min,specs[model()].max);
+  cutoffInput.value=String(n);cutoffValue.textContent=String(n);
+}
+updateMathText();probeAt(model()===0?[1,0]:[2,0]);
 if (typeof ResizeObserver!=="undefined") new ResizeObserver(queueDraw).observe(canvas);
 window.addEventListener("resize",queueDraw);
 initialize();
