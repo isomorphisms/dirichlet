@@ -1,4 +1,5 @@
 #include "dirichlet_view.h"
+#include "dirichlet_eval.h"
 
 #include <math.h>
 #include <stddef.h>
@@ -27,6 +28,7 @@ void dirichlet_view_initialize(struct dirichlet_view *view) {
     view->model = DIRICHLET_GEOMETRIC;
     view->cutoff = 4u;
     view->prime = 3u;
+    view->character = DIRICHLET_CHI4;
     reset_camera(view);
 }
 
@@ -65,6 +67,12 @@ static bool prime_allowed(unsigned prime) {
 bool dirichlet_view_set_prime(struct dirichlet_view *view, unsigned prime) {
     if (view == NULL || !prime_allowed(prime)) return false;
     view->prime = prime;
+    return true;
+}
+
+bool dirichlet_view_set_character(struct dirichlet_view *view, unsigned character) {
+    if (view == NULL || character >= DIRICHLET_CHARACTER_COUNT) return false;
+    view->character = character;
     return true;
 }
 
@@ -135,5 +143,7 @@ bool dirichlet_view_uniforms(
     out->model = (int)view->model;
     out->cutoff = (int)view->cutoff;
     out->prime = (int)view->prime;
+    if (view->character >= DIRICHLET_CHARACTER_COUNT) return false;
+    out->character = (int)view->character;
     return true;
 }

@@ -13,6 +13,7 @@ uniform float u_aspect;
 uniform int u_model;
 uniform int u_cutoff;
 uniform int u_prime;
+uniform int u_character;
 #ifdef DIRICHLET_NUMERIC_CAPTURE
 uniform int u_capture_component;
 #endif
@@ -34,9 +35,33 @@ vec2 n_to_minus_s(float n, vec2 s) {
     float angle = -s.y * logarithm;
     return radius * vec2(cos(angle), sin(angle));
 }
-int chi4(int n) {
-    if (n % 2 == 0) return 0;
-    return n % 4 == 1 ? 1 : -1;
+vec2 character_value(int id, int n) {
+    if (id == 0 || id == 5) {
+        int r = n % 4;
+        if (r == 1) return vec2(1.0,0.0);
+        if (r == 3) return vec2(id == 0 ? -1.0 : 1.0,0.0);
+        return vec2(0.0);
+    }
+    if (id == 1) {
+        int r = n % 3;
+        return vec2(r == 1 ? 1.0 : (r == 2 ? -1.0 : 0.0),0.0);
+    }
+    if (id == 2 || id == 3) {
+        int r = n % 5;
+        if (r == 1) return vec2(1.0,0.0);
+        if (r == 4) return vec2(-1.0,0.0);
+        if (r == 2) return vec2(0.0,id == 2 ? 1.0 : -1.0);
+        if (r == 3) return vec2(0.0,id == 2 ? -1.0 : 1.0);
+        return vec2(0.0);
+    }
+    if (id == 4) {
+        int r = n % 8;
+        if (r == 1 || r == 7) return vec2(1.0,0.0);
+        if (r == 3 || r == 5) return vec2(-1.0,0.0);
+        return vec2(0.0);
+    }
+    if (id == 6) return vec2(1.0,0.0);
+    return vec2(0.0); // Caller must validate id before binding the uniform.
 }
 bool is_prime(int n) {
     if (n < 2) return false;
@@ -58,23 +83,22 @@ vec2 geometric(int n, vec2 q) {
     return sum;
 }
 vec2 euler_local(int p, vec2 s) {
-    float c = float(chi4(p));
-    return c_inverse(vec2(1.0,0.0) - c*n_to_minus_s(float(p),s));
+    vec2 factor = c_mul(character_value(u_character,p),n_to_minus_s(float(p),s));
+    return c_inverse(vec2(1.0,0.0)-factor);
 }
-vec2 chi4_partial(int cutoff, vec2 s) {
+vec2 character_partial(int cutoff, vec2 s) {
     vec2 sum = vec2(0.0);
     for (int n = 1; n <= MAX_SERIES; n++) {
         if (n > cutoff) break;
-        int c = chi4(n);
-        if (c != 0) sum += float(c)*n_to_minus_s(float(n),s);
+        sum += c_mul(character_value(u_character,n),n_to_minus_s(float(n),s));
     }
     return sum;
 }
-vec2 chi4_product(int cutoff, vec2 s) {
+vec2 character_product(int cutoff, vec2 s) {
     vec2 value = vec2(1.0,0.0);
     for (int p = 2; p <= MAX_PRIME; p++) {
         if (p > cutoff) break;
-        if (is_prime(p)) value = c_mul(value, euler_local(p,s));
+        if (is_prime(p)) value = c_mul(value,euler_local(p,s));
     }
     return value;
 }
@@ -86,8 +110,8 @@ void main() {
     vec2 value = vec2(0.0);
     if (u_model == 0) value = geometric(u_cutoff, z);
     else if (u_model == 1) value = euler_local(u_prime, z);
-    else if (u_model == 2) value = chi4_partial(u_cutoff, z);
-    else value = chi4_product(u_cutoff, z);
+    else if (u_model == 2) value = character_partial(u_cutoff, z);
+    else value = character_product(u_cutoff, z);
 #ifdef DIRICHLET_NUMERIC_CAPTURE
     // Read this exact evaluator as float32 bytes from a 1x1 RGBA8 FBO.
     // Two passes select real and imaginary components.

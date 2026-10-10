@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 #include "../code/dirichlet_view.h"
+#include "../code/dirichlet_eval.h"
 
 static int near(float left, float right) {
     return fabsf(left-right) < 0.00015f;
@@ -12,7 +13,10 @@ int main(void) {
     struct dirichlet_view view;
     dirichlet_view_initialize(&view);
     assert(view.model == DIRICHLET_GEOMETRIC);
-    assert(view.cutoff == 4 && view.prime == 3);
+    assert(view.cutoff == 4 && view.prime == 3 && view.character == 0);
+    assert(dirichlet_view_set_character(&view,DIRICHLET_CHI5_PLUS));
+    assert(!dirichlet_view_set_character(&view,99));
+    assert(view.character == DIRICHLET_CHI5_PLUS);
     assert(near(view.center_x,0) && near(view.center_y,0));
     assert(near(view.half_height,1.6f));
     assert(dirichlet_view_set_cutoff(&view,0));
@@ -49,6 +53,7 @@ int main(void) {
     assert(near(uniforms.aspect,0.5f));
     assert(uniforms.model == DIRICHLET_PARTIAL_SUM && uniforms.cutoff == 127);
     assert(uniforms.prime == 31);
+    assert(uniforms.character == DIRICHLET_CHI5_PLUS);
     float remembered_x=view.center_x;
     float remembered_y=view.center_y;
     assert(dirichlet_view_select(&view,DIRICHLET_EULER_PRODUCT));

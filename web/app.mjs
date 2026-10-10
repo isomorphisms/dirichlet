@@ -1,4 +1,4 @@
-import {evaluate} from "./eval.mjs";
+import {CHARACTERS,characterValue,evaluate} from "./eval.mjs";
 
 const WEGERT_REVISION = "873d03e86ec2e4a9236bb2d253fee3c8fde83b6c";
 const WEGERT_COLOR_URL =
@@ -7,6 +7,7 @@ const WEGERT_COLOR_URL =
 
 const byId = id => document.getElementById(id);
 const canvas = byId("portrait"), modelInput = byId("model");
+const characterInput = byId("character"), characterRow = byId("character-row");
 const cutoffInput = byId("cutoff"), cutoffRow = byId("cutoff-row");
 const primeInput = byId("prime"), primeRow = byId("prime-row");
 const cutoffLabel = byId("cutoff-label"), cutoffValue = byId("cutoff-value");
@@ -24,6 +25,7 @@ const specs = [
   {min:2,max:31,initial:13,label:"Last prime bound P"}
 ];
 const model = () => Number(modelInput.value);
+const character = () => Number(characterInput.value);
 const cutoff = () => Number(cutoffInput.value);
 const prime = () => Number(primeInput.value);
 const clamp = (x,a,b) => Math.min(b,Math.max(a,x));
@@ -50,25 +52,32 @@ function probeAt(z) {
 }
 function updateMathText() {
   const n=cutoff(), p=prime(), m=model();
+  const definition=CHARACTERS[character()], chi=definition.symbol;
   if (m===0) {
     formula.textContent="G("+n+",q) = Σ[k=0…"+(n-1)+"] q^k";
     scope.textContent="A finite polynomial. At q=1 its value is "+n+
       ", not a pole. For N=4 its zeros are −1, +i and −i.";
     plane.textContent="q-plane · finite polynomial";
   } else if (m===1) {
-    formula.textContent="1/(1 − χ₄("+p+")·"+p+"^(−s))";
-    scope.textContent="One meromorphic Euler factor, not the global L-function. "+
-      "Denominator zeros are genuine poles of this local factor.";
+    const value=characterValue(character(),p);
+    formula.textContent="1/(1 − "+chi+"("+p+")·"+p+"^(−s))"+
+      "\n"+chi+"("+p+") = "+formatComplex(value);
+    scope.textContent="One meromorphic local Euler factor of a character modulo "+
+      definition.modulus+", not the global L-function.";
     plane.textContent="s-plane · one Euler factor";
   } else if (m===2) {
-    formula.textContent="S("+n+",s) = Σ[n=1…"+n+"] χ₄(n)n^(−s)";
-    scope.textContent="Finite and entire. As N→∞ the χ₄ series tends to L(s,χ₄) "+
-      "for Re(s)>0, absolutely for Re(s)>1. A finite portrait is not continuation.";
+    formula.textContent="S("+n+",s) = Σ[j=1…"+n+"] "+chi+"(j)j^(−s)";
+    scope.textContent="Finite and entire. "+
+      (definition.principal ?
+        "The underlying principal-character series converges for Re(s)>1 and has a pole at s=1." :
+        "The underlying nonprincipal Dirichlet series converges for Re(s)>0, absolutely for Re(s)>1.")+
+      " A finite sum does not supply analytic continuation.";
     plane.textContent="s-plane · finite Dirichlet sum";
   } else {
-    formula.textContent="P("+n+",s) = ∏[prime p≤"+n+"] (1−χ₄(p)p^(−s))^(−1)";
-    scope.textContent="Finite meromorphic product; its infinite limit equals L(s,χ₄) "+
-      "for Re(s)>1. Outside this domain it is NOT continuation or an L-zero portrait.";
+    formula.textContent="P("+n+",s) = ∏[prime p≤"+n+"] (1−"+chi+"(p)p^(−s))^(−1)";
+    scope.textContent="Finite meromorphic product for a character modulo "+
+      definition.modulus+". The infinite Euler product equals L(s,"+chi+
+      ") in Re(s)>1 only. Outside this half-plane the finite portrait is NOT L-function continuation.";
     plane.textContent="s-plane · finite Euler product";
   }
 }
@@ -80,6 +89,7 @@ function resetCamera() {
 function chooseModel() {
   const m=model(), spec=specs[m];
   cutoffRow.hidden=m===1; primeRow.hidden=m!==1;
+  characterRow.hidden=m===0;
   cutoffInput.min=String(spec.min); cutoffInput.max=String(spec.max);
   cutoffInput.value=String(spec.initial);
   cutoffLabel.textContent=spec.label; cutoffValue.textContent=String(spec.initial);
@@ -105,6 +115,7 @@ function render() {
   gl.uniform1i(uniforms.model,model());
   gl.uniform1i(uniforms.cutoff,cutoff());
   gl.uniform1i(uniforms.prime,prime());
+  gl.uniform1i(uniforms.character,character());
   gl.drawArrays(gl.TRIANGLES,0,3);
   // Opt-in proof of actual browser draw and readback (not Android evidence).
   if (new URLSearchParams(location.search).get('smoke') === '1') {
@@ -175,6 +186,7 @@ cutoffInput.addEventListener("input",()=>{
   cutoffValue.textContent=cutoffInput.value;updateMathText();probeAt(probePoint);queueDraw();
 });
 primeInput.addEventListener("change",()=>{updateMathText();probeAt(probePoint);queueDraw();});
+characterInput.addEventListener("change",()=>{updateMathText();probeAt(probePoint);queueDraw();});
 byId("reset").addEventListener("click",resetCamera);
 
 function compiled(type,source) {
@@ -216,7 +228,8 @@ async function initialize() {
     gl.bindVertexArray(gl.createVertexArray());
     for (const [key,name] of Object.entries({
       center:"u_center",halfHeight:"u_half_height",aspect:"u_aspect",
-      model:"u_model",cutoff:"u_cutoff",prime:"u_prime"
+      model:"u_model",cutoff:"u_cutoff",prime:"u_prime",
+      character:"u_character"
     })) uniforms[key]=gl.getUniformLocation(program,name);
     status.textContent="WebGL2 GLSL linked. Browser renderer: "+gl.getParameter(gl.RENDERER)+
       "; pinned Wegert "+WEGERT_REVISION.slice(0,12)+
@@ -231,6 +244,8 @@ if (gl) canvas.addEventListener("webglcontextlost",e=>{
 const initial = new URLSearchParams(location.search);
 if (['0','1','2','3'].includes(initial.get('model')))
   modelInput.value = initial.get('model');
+if (initial.has("character") && CHARACTERS[Number(initial.get("character"))])
+  characterInput.value=initial.get("character");
 chooseModel();
 if (initial.has('prime') && [...primeInput.options].some(o=>o.value===initial.get('prime')))
   primeInput.value=initial.get('prime');

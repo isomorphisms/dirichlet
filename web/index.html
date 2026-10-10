@@ -63,9 +63,21 @@
         <label for="model">Function</label>
         <select id="model">
           <option value="0">Finite geometric sum G(N,q)</option>
-          <option value="1">Single χ₄ Euler factor</option>
-          <option value="2">Finite χ₄ Dirichlet sum</option>
-          <option value="3">Finite χ₄ Euler product</option>
+          <option value="1">Single-character Euler factor</option>
+          <option value="2">Finite Dirichlet sum</option>
+          <option value="3">Finite Euler product</option>
+        </select>
+      </div>
+      <div class="control" id="character-row" hidden>
+        <label for="character">Dirichlet character (not modular weight)</label>
+        <select id="character">
+          <option value="0">χ₄ · primitive modulo 4</option>
+          <option value="1">χ₃ · primitive modulo 3</option>
+          <option value="2">χ₅⁺ · quartic modulo 5, χ(2)=+i</option>
+          <option value="3">χ₅⁻ · quartic modulo 5, χ(2)=−i</option>
+          <option value="4">χ₈ · primitive even modulo 8</option>
+          <option value="5">χ₀,₄ · principal modulo 4</option>
+          <option value="6">χ₁ · principal modulo 1 (ζ)</option>
         </select>
       </div>
       <div class="control" id="cutoff-row">
@@ -75,16 +87,17 @@
       <div class="control" id="prime-row" hidden>
         <label for="prime">Prime p</label>
         <select id="prime">
-          <option value="3">3 (χ₄(p) = −1)</option>
-          <option value="5">5 (χ₄(p) = +1)</option>
-          <option value="7">7 (χ₄(p) = −1)</option>
-          <option value="11">11 (χ₄(p) = −1)</option>
-          <option value="13">13 (χ₄(p) = +1)</option>
-          <option value="17">17 (χ₄(p) = +1)</option>
-          <option value="19">19 (χ₄(p) = −1)</option>
-          <option value="23">23 (χ₄(p) = −1)</option>
-          <option value="29">29 (χ₄(p) = +1)</option>
-          <option value="31">31 (χ₄(p) = −1)</option>
+          <option value="2">2</option>
+          <option value="3" selected>3</option>
+          <option value="5">5</option>
+          <option value="7">7</option>
+          <option value="11">11</option>
+          <option value="13">13</option>
+          <option value="17">17</option>
+          <option value="19">19</option>
+          <option value="23">23</option>
+          <option value="29">29</option>
+          <option value="31">31</option>
         </select>
       </div>
       <button id="reset" type="button">Reset camera</button>

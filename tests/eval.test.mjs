@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import {chi4, isPrime, geometric, local, partial, finiteProduct, evaluate} from "../web/eval.mjs";
+import {CHARACTERS, characterValue, chi4, isPrime, geometric, local, partial, finiteProduct, evaluate} from "../web/eval.mjs";
 
 const near = (z, x, tolerance = 1e-10) => {
   assert.ok(Math.hypot(z[0] - x[0], z[1] - x[1]) < tolerance, [z,x].join(" | "));
@@ -38,4 +38,38 @@ test("fail closed for invalid cutoffs or local composites", () => {
   assert.throws(() => partial(128,[2,0]), RangeError);
   assert.throws(() => finiteProduct(32,[2,0]), RangeError);
   assert.throws(() => local(9,[2,0]), RangeError);
+});
+
+test("all character tables: normalization, unit support and multiplication", () => {
+  const gcd=(a,b)=>b===0?a:gcd(b,a%b);
+  const multiply=(x,y)=>[x[0]*y[0]-x[1]*y[1],x[0]*y[1]+x[1]*y[0]];
+  assert.equal(CHARACTERS.length,7);
+  for (const [id,{modulus}] of CHARACTERS.entries()) {
+    assert.deepEqual(characterValue(id,1),[1,0]);
+    for (let a=0;a<modulus;a++) {
+      const c=characterValue(id,a);
+      assert.deepEqual(c,characterValue(id,a+3*modulus));
+      assert.equal(c[0]*c[0]+c[1]*c[1],gcd(a,modulus)===1?1:0);
+      for (let b=0;b<modulus;b++) {
+        const actual=characterValue(id,a*b),expected=multiply(c,characterValue(id,b));
+        assert.ok(actual[0]===expected[0] && actual[1]===expected[1],
+          "character "+id+" residues "+a+", "+b);
+      }
+    }
+  }
+});
+test("quartic conjugates and distinct principal characters", () => {
+  assert.deepEqual(characterValue(2,2),[0,1]);
+  assert.deepEqual(characterValue(3,2),[0,-1]);
+  assert.deepEqual(characterValue(4,7),[1,0]);
+  assert.deepEqual(characterValue(5,3),[1,0]);
+  assert.deepEqual(characterValue(6,2),[1,0]);
+  near(local(2,[2,0],2),[16/17,4/17]);
+  near(partial(3,[2,0],6),[1+1/4+1/9,0]);
+  near(evaluate(1,0,2,[2,0],2),[16/17,4/17]);
+  assert.throws(()=>characterValue(7,1),RangeError);
+  assert.throws(()=>characterValue(0,-1),RangeError);
+  assert.throws(()=>partial(0,[2,0],7),RangeError);
+  assert.throws(()=>finiteProduct(0,[2,0],7),RangeError);
+  assert.throws(()=>local(2,[2,0],7),RangeError);
 });
