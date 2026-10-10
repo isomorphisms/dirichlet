@@ -8,7 +8,7 @@ module Geometric.Finite where
 -- this file proves the identity for all integers q and all natural N.
 
 open import Data.Nat.Base using (ℕ; zero; suc)
-open import Data.Integer using (ℤ; +_; _+_; _-_; _*_)
+open import Data.Integer using (ℤ; +_; -_; _+_; _-_; _*_)
 open import Data.List.Base using (_∷_; [])
 open import Relation.Binary.PropositionalEquality
   using (_≡_; refl; cong; module ≡-Reasoning)
