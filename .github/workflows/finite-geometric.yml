@@ -26,7 +26,7 @@ jobs:
       - name: Check finite identity, including induction and concrete values
         run: |
           agda --version
-          agda --safe -i agda agda/Geometric/Finite.agda
+          agda --safe -i proofs proofs/Geometric/Finite.agda
 
   # Idriç is not marked green by this lane. Before enabling an Idriç job,
   # supply a pinned, runnable compiler and record its true target/backend.
