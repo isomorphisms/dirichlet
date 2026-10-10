@@ -46,7 +46,7 @@ module OverRing {c ℓ} (R : CommutativeRing c ℓ) where
       coefficient (Nat._*_ p (product rest))
         ≈⟨ coefficient-times p (product rest) ⟩
       coefficient p * coefficient (product rest)
-        ≈⟨ *-congʳ (coefficient-of-product rest) ⟩
+        ≈⟨ *-congˡ (coefficient-of-product rest) ⟩
       coefficient p * prime-weights rest
         ≈⟨ refl ⟩
       prime-weights (p ∷ rest)
