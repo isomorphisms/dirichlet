@@ -14,6 +14,7 @@ const formula = byId("formula"), scope = byId("scope");
 const probe = byId("probe"), status = byId("status"), plane = byId("plane");
 const gl = canvas.getContext("webgl2", {antialias:false, alpha:false});
 let program = null, center = [0,0], halfHeight = 1.6, lastMode = 0;
+let probePoint = [1,0];
 let drawScheduled = false, gestureMoved = false;
 const pointers = new Map(), uniforms = {};
 const specs = [
@@ -37,6 +38,7 @@ function formatComplex(z) {
     formatNumber(Math.abs(z[1])) + "i";
 }
 function probeAt(z) {
+  probePoint = [...z];
   try {
     const v = evaluate(model(),cutoff(),prime(),z), mag = Math.hypot(v[0],v[1]);
     const extra = Number.isFinite(mag) && mag > 0 ?
@@ -170,9 +172,9 @@ canvas.addEventListener("wheel",e=>{
 canvas.addEventListener("dblclick",e=>{e.preventDefault();resetCamera();});
 modelInput.addEventListener("change",chooseModel);
 cutoffInput.addEventListener("input",()=>{
-  cutoffValue.textContent=cutoffInput.value;updateMathText();queueDraw();
+  cutoffValue.textContent=cutoffInput.value;updateMathText();probeAt(probePoint);queueDraw();
 });
-primeInput.addEventListener("change",()=>{updateMathText();probeAt([2,0]);queueDraw();});
+primeInput.addEventListener("change",()=>{updateMathText();probeAt(probePoint);queueDraw();});
 byId("reset").addEventListener("click",resetCamera);
 
 function compiled(type,source) {

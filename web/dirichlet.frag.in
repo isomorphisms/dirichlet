@@ -13,6 +13,9 @@ uniform float u_aspect;
 uniform int u_model;
 uniform int u_cutoff;
 uniform int u_prime;
+#ifdef DIRICHLET_NUMERIC_CAPTURE
+uniform int u_capture_component;
+#endif
 
 const int MAX_GEOMETRIC = 32;
 const int MAX_SERIES = 127;
@@ -85,5 +88,17 @@ void main() {
     else if (u_model == 1) value = euler_local(u_prime, z);
     else if (u_model == 2) value = chi4_partial(u_cutoff, z);
     else value = chi4_product(u_cutoff, z);
+#ifdef DIRICHLET_NUMERIC_CAPTURE
+    // Read this exact evaluator as float32 bytes from a 1x1 RGBA8 FBO.
+    // Two passes select real and imaginary components.
+    float component = u_capture_component == 0 ? value.x : value.y;
+    uint bits = floatBitsToUint(component);
+    uvec4 octets = uvec4(
+        bits & 255u, (bits >> 8u) & 255u,
+        (bits >> 16u) & 255u, (bits >> 24u) & 255u
+    );
+    frag_color = vec4(octets) / 255.0;
+#else
     frag_color = vec4(wegert_color_complex(value), 1.0);
+#endif
 }

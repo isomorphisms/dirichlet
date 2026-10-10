@@ -40,7 +40,8 @@ double complex dirichlet_chi4_partial_sum(unsigned last_n, double complex s) {
             total += (double)character * cexp(-s * log((double)n));
         }
     }
-    /* A finite sum exists everywhere. Convergence to L needs Re(s)>1. */
+    /* Finite sum is entire; chi4 converges to L in Re(s)>0,
+       absolutely in Re(s)>1. Not a continuation algorithm. */
     return total;
 }
 
