@@ -1,0 +1,46 @@
+module GeometricFinite
+
+-- Idriç implementation surface. This is a runnable mathematical definition,
+-- not a complete formal proof of the quantified theorem. The universally
+-- quantified identity is proved independently in Agda/Geometric/Finite.agda.
+-- These witnesses are concrete normalization cases, not proof by testing.
+
+public export
+integer_power : ±Number → Number → ±Number
+integer_power ratio Z = 1
+integer_power ratio (S count) =
+  ratio × integer_power ratio count
+
+public export
+geometric_sum : ±Number → Number → ±Number
+geometric_sum ratio Z = 0
+geometric_sum ratio (S count) =
+  geometric_sum ratio count + integer_power ratio count
+
+public export
+one_four : geometric_sum 1 4 = 4
+one_four = Refl
+
+public export
+two_four : geometric_sum 2 4 = 15
+two_four = Refl
+
+public export
+zero_four : geometric_sum 0 4 = 1
+zero_four = Refl
+
+public export
+closed_finite_identity :
+  (1 − 2) × geometric_sum 2 4 = 1 − integer_power 2 4
+closed_finite_identity = Refl
+
+-- Next theorem (deliberately not declared with an unfilled proof):
+--
+--   (ratio : ring_carrier) → (count : Number) →
+--   (one − ratio) × geometric_sum ratio count
+--     = one − integer_power ratio count
+--
+-- The proof must be parametric over a genuine commutative ring and use
+-- established ring laws, not presumed equality from floating-point results.
+-- An Idriç compiler typecheck receipt is still required for even these
+-- closed witnesses; a .idric source file alone is not such a receipt.
