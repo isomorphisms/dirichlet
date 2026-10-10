@@ -17,6 +17,7 @@ struct dirichlet_view {
     enum dirichlet_view_model model;
     unsigned cutoff;
     unsigned prime;
+    unsigned character;
     float center_x;
     float center_y;
     float half_height;
@@ -29,12 +30,14 @@ struct dirichlet_glsl_uniforms {
     int model; /* u_model */
     int cutoff; /* u_cutoff */
     int prime; /* u_prime */
+    int character; /* u_character */
 };
 
 void dirichlet_view_initialize(struct dirichlet_view *view);
 bool dirichlet_view_select(struct dirichlet_view *view, enum dirichlet_view_model model);
 bool dirichlet_view_set_cutoff(struct dirichlet_view *view, unsigned cutoff);
 bool dirichlet_view_set_prime(struct dirichlet_view *view, unsigned prime);
+bool dirichlet_view_set_character(struct dirichlet_view *view, unsigned character);
 bool dirichlet_view_pan_pixels(
     struct dirichlet_view *view,
     float delta_x, float delta_y, float screen_height
