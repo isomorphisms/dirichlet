@@ -14,10 +14,6 @@ module OverCommutativeRing {c ℓ} (R : CommutativeRing c ℓ) where
   open import Relation.Binary.Reasoning.Setoid setoid
   open import Algebra.Properties.Ring ring using (-‿distribˡ-*)
 
-  infixl 6 _-_
-  _-_ : Carrier → Carrier → Carrier
-  left - right = left + (- right)
-
   power : Carrier → ℕ → Carrier
   power ratio zero = 1#
   power ratio (suc count) = ratio * power ratio count
