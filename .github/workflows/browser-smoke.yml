@@ -18,5 +18,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: dirichlet-wegert-headless-browser
-          path: /tmp/dirichlet-browser-portrait.png
+          path: /tmp/dirichlet-browser-portrait-*.png
           retention-days: 14
