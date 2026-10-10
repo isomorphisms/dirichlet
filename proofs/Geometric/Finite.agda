@@ -28,6 +28,21 @@ geometric ratio zero = + 0
 geometric ratio (suc count) =
   geometric ratio count + power ratio count
 
+-- Ring tactics accept a list of *variables*, not computed expressions.
+-- These two universally quantified lemmas isolate the polynomial steps.
+distribute-step
+  : (ratio partial term : ℤ)
+  → ((+ 1 - ratio) * (partial + term))
+    ≡ (((+ 1 - ratio) * partial) + ((+ 1 - ratio) * term))
+distribute-step ratio partial term =
+  solve (ratio ∷ partial ∷ term ∷ [])
+
+cancel-step
+  : (ratio term : ℤ)
+  → ((+ 1 - term) + ((+ 1 - ratio) * term))
+    ≡ (+ 1 - ratio * term)
+cancel-step ratio term = solve (ratio ∷ term ∷ [])
+
 -- The finite identity is an *equality type*, established for every ratio
 -- and every count by induction. The solver only discharges ring algebra;
 -- it does not supply the induction hypothesis.
@@ -40,7 +55,7 @@ finite-geometric ratio (suc count) = begin
   (+ 1 - ratio) * geometric ratio (suc count)
     ≡⟨⟩
   (+ 1 - ratio) * (geometric ratio count + power ratio count)
-    ≡⟨ solve (ratio ∷ geometric ratio count ∷ power ratio count ∷ []) ⟩
+    ≡⟨ distribute-step ratio (geometric ratio count) (power ratio count) ⟩
   ((+ 1 - ratio) * geometric ratio count)
     + ((+ 1 - ratio) * power ratio count)
     ≡⟨ cong
@@ -48,7 +63,7 @@ finite-geometric ratio (suc count) = begin
          (finite-geometric ratio count) ⟩
   (+ 1 - power ratio count)
     + ((+ 1 - ratio) * power ratio count)
-    ≡⟨ solve (ratio ∷ power ratio count ∷ []) ⟩
+    ≡⟨ cancel-step ratio (power ratio count) ⟩
   + 1 - (ratio * power ratio count)
     ≡⟨⟩
   + 1 - power ratio (suc count)
