@@ -44,6 +44,30 @@ int main(void) {
     assert(!isfinite(creal(dirichlet_geometric(33, 1))));
     assert(!isfinite(creal(dirichlet_chi4_partial_sum(128, 2))));
     assert(!isfinite(creal(dirichlet_chi4_local_factor(9, 2))));
+    /* Finite-table character axioms, including the modulus-one identity. */
+    for (unsigned id=0;id<DIRICHLET_CHARACTER_COUNT;++id) {
+        unsigned modulus=dirichlet_character_modulus(id);
+        assert(modulus!=0);
+        assert(dirichlet_character_table_valid(id));
+        for (unsigned n=0;n<modulus;++n)
+            assert(dirichlet_character_value(id,n)==
+                   dirichlet_character_value(id,n+3u*modulus));
+    }
+    assert(dirichlet_character_modulus(DIRICHLET_CHARACTER_COUNT)==0);
+    assert(!dirichlet_character_table_valid(DIRICHLET_CHARACTER_COUNT));
+    assert(!isfinite(creal(dirichlet_character_value(DIRICHLET_CHARACTER_COUNT,1))));
+    assert(dirichlet_character_value(DIRICHLET_CHI5_PLUS,2)==I);
+    assert(dirichlet_character_value(DIRICHLET_CHI5_MINUS,2)==-I);
+    assert(dirichlet_character_value(DIRICHLET_CHI8,7)==1.0);
+    assert(dirichlet_character_value(DIRICHLET_CHI0_MOD4,3)==1.0);
+    assert(dirichlet_character_value(DIRICHLET_CHI1,2)==1.0);
+    assert(near(dirichlet_character_local_factor(DIRICHLET_CHI5_PLUS,2,2),
+                (16.0+4.0*I)/17.0,1e-13));
+    assert(near(dirichlet_character_partial_sum(DIRICHLET_CHI1,3,2),
+                1.0+0.25+1.0/9.0,1e-13));
+    assert(!isfinite(creal(dirichlet_character_partial_sum(
+        DIRICHLET_CHARACTER_COUNT,3,2))));
+    assert(!isfinite(creal(dirichlet_character_local_factor(DIRICHLET_CHI4,9,2))));
     puts("Dirichlet finite evaluator: host fixtures passed");
     return 0;
 }
