@@ -12,7 +12,14 @@ int main(void) {
     struct dirichlet_view view;
     dirichlet_view_initialize(&view);
     assert(view.model == DIRICHLET_GEOMETRIC);
-    assert(view.cutoff == 4 && view.prime == 3);
+    assert(view.cutoff == 4 && view.prime == 3 && view.character == 4);
+    assert(dirichlet_view_set_character(&view,1));
+    assert(view.character == 1);
+    assert(dirichlet_view_set_character(&view,3));
+    assert(view.character == 3);
+    assert(!dirichlet_view_set_character(&view,2));
+    assert(view.character == 3);
+    assert(dirichlet_view_set_character(&view,4));
     assert(near(view.center_x,0) && near(view.center_y,0));
     assert(near(view.half_height,1.6f));
     assert(dirichlet_view_set_cutoff(&view,0));
@@ -48,7 +55,7 @@ int main(void) {
     assert(dirichlet_view_uniforms(&view,576,1152,&uniforms));
     assert(near(uniforms.aspect,0.5f));
     assert(uniforms.model == DIRICHLET_PARTIAL_SUM && uniforms.cutoff == 127);
-    assert(uniforms.prime == 31);
+    assert(uniforms.prime == 31 && uniforms.character == 4);
     float remembered_x=view.center_x;
     float remembered_y=view.center_y;
     assert(dirichlet_view_select(&view,DIRICHLET_EULER_PRODUCT));
@@ -66,6 +73,8 @@ int main(void) {
     assert(!dirichlet_view_pan_pixels(&view,0,NAN,1152));
     assert(!dirichlet_view_uniforms(&view,576,0,&uniforms));
     assert(!dirichlet_view_select(&view,(enum dirichlet_view_model)99));
+    view.character = 2;
+    assert(!dirichlet_view_uniforms(&view,576,1152,&uniforms));
 
     puts("Dirichlet portable viewport/uniform ABI fixtures passed");
     return 0;
