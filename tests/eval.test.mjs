@@ -51,7 +51,8 @@ test("all character tables: normalization, unit support and multiplication", () 
       assert.deepEqual(c,characterValue(id,a+3*modulus));
       assert.equal(c[0]*c[0]+c[1]*c[1],gcd(a,modulus)===1?1:0);
       for (let b=0;b<modulus;b++)
-        assert.deepEqual(characterValue(id,a*b),multiply(c,characterValue(id,b)),
+        const actual=characterValue(id,a*b),expected=multiply(c,characterValue(id,b));
+        assert.ok(actual[0]===expected[0] && actual[1]===expected[1],
           "character "+id+" residues "+a+", "+b);
     }
   }
