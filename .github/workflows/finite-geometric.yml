@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - proof/finite-geometric-agda-idric
   pull_request:
   workflow_dispatch:
 
@@ -23,10 +22,11 @@ jobs:
         with:
           agda-version: '2.8.0'
           agda-stdlib-version: '2.3'
-      - name: Check finite identity, including induction and concrete values
+      - name: Check both finite identity proofs, integer and arbitrary ring
         run: |
           agda --version
           agda --safe -i proofs proofs/Geometric/Finite.agda
+          agda --safe -i proofs proofs/Geometric/General.agda
 
   # Idriç is not marked green by this lane. Before enabling an Idriç job,
   # supply a pinned, runnable compiler and record its true target/backend.
