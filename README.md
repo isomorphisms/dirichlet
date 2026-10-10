@@ -147,3 +147,34 @@ acceptance. The direct loading of GPL Wegert code is explicit; any
 combined offline or bundled distribution needs licensing resolved.
 Flexible Pipes #72 is a tracking issue, not a dispatched job receipt.
 Do not merge/release until the actual work-control gate accepts it.
+
+
+## Numerical C11 / JavaScript / WebGL2 parity
+
+The viewer has an opt-in numerical-capture variant of the **same**
+fragment shader. It carries the raw IEEE-754 float32 real and imaginary
+results through two WebGL2 draws into an offscreen 1x1 RGBA8 buffer
+using four byte-encoded color channels per component. The reader
+decodes actual GLSL numbers; screenshot colors are not treated as
+numerical evidence.
+
+A reproducible 81-case grid (tests/numeric-cases.mjs) covers all four
+models: N=0, G(4,1), roots of unity, both chi4 character signs, primes
+including 2, moving cutoffs, and complex coordinates. A separately
+implemented C11 evaluator must match the JavaScript evaluator to
+scaled error below 2e-11; running WebGL2 shader values must agree
+within absolute error 0.0002 + 0.0003 times the reference modulus.
+
+The shader test accepts only moderate, finite, nonsingular test points.
+No bound is claimed near local-factor poles, for huge complex
+magnitudes, or beyond the bounded truncation ranges. Do not replace a
+failed shader with CPU-generated colors. The browser test uses
+software/SwiftShader and does **not** certify physical PowerVR or
+native Android GLES selection.
+
+To run independently, compile code/dirichlet_eval.c with
+tests/numeric-grid-cli.c using C11 and -lm, then pass that binary to
+node tests/cpu-grid.mjs. For real shader execution run
+bash tests/browser-smoke.sh; it also records four normal browser
+portraits. This remains separate from proof checking and full L-function
+analytic continuation.
