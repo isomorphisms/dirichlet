@@ -25,8 +25,8 @@ jobs:
       - name: Check both finite identity proofs, integer and arbitrary ring
         run: |
           agda --version
-          agda --safe -i proofs proofs/Geometric/Finite.agda
           agda --safe -i proofs proofs/Geometric/General.agda
+          agda --safe -i proofs proofs/Geometric/Finite.agda
 
   # Idriç is not marked green by this lane. Before enabling an Idriç job,
   # supply a pinned, runnable compiler and record its true target/backend.
