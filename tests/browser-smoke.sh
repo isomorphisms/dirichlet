@@ -28,7 +28,7 @@ done
 echo "Four actual WebGL2 Wegert GLSL portraits passed (headless browser, not Android)"
 
 parity_url="http://127.0.0.1:8098/tests/shader-parity.html"
-"$chrome" --headless=new --no-sandbox --disable-dev-shm-usage --enable-unsafe-swiftshader --use-angle=swiftshader --use-gl=angle --enable-webgl --virtual-time-budget=20000 --window-size=1000,700 --user-data-dir="/tmp/dirichlet-chrome-parity" --dump-dom "$parity_url" >"/tmp/dirichlet-parity-dom.html" 2>"/tmp/dirichlet-parity-chrome.log
+"$chrome" --headless=new --no-sandbox --disable-dev-shm-usage --enable-unsafe-swiftshader --use-angle=swiftshader --use-gl=angle --enable-webgl --virtual-time-budget=20000 --window-size=1000,700 --user-data-dir="/tmp/dirichlet-chrome-parity" --dump-dom "$parity_url" >"/tmp/dirichlet-parity-dom.html" 2>"/tmp/dirichlet-parity-chrome.log"
 if ! grep -q 'data-parity-status="pass"' "/tmp/dirichlet-parity-dom.html"; then
   echo "WebGL2 shader numerical agreement failed"
   grep -A8 'id="report"' /tmp/dirichlet-parity-dom.html || true
