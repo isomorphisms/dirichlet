@@ -74,6 +74,7 @@ async function verify() {
     model:u("u_model"),
     cutoff:u("u_cutoff"),
     prime:u("u_prime"),
+    character:u("u_character"),
     component:u("u_capture_component")
   };
   // An offscreen RGBA8 framebuffer, not the composited browser canvas.
@@ -111,7 +112,7 @@ async function verify() {
   let worst=0;
   const perMode=[0,0,0,0];
   for (const [index,c] of numericCases.entries()) {
-    const expected=evaluate(c.mode,c.cutoff,c.prime,c.point);
+    const expected=evaluate(c.mode,c.cutoff,c.prime,c.point,c.character);
     if (!expected.every(Number.isFinite))
       throw new Error("Invalid CPU grid point "+index);
     gl.uniform2f(uniforms.center,c.point[0],c.point[1]);
@@ -120,6 +121,7 @@ async function verify() {
     gl.uniform1i(uniforms.model,c.mode);
     gl.uniform1i(uniforms.cutoff,c.cutoff);
     gl.uniform1i(uniforms.prime,c.prime);
+    gl.uniform1i(uniforms.character,c.character);
     const actual=[sample(0),sample(1)];
     if (!actual.every(Number.isFinite))
       throw new Error("Nonfinite GPU result "+JSON.stringify({index,c,actual}));
