@@ -12,6 +12,7 @@ module Euler.PrimeExponentUniqueness where
 import Data.Nat.Base as Nat
 import Data.Nat.Properties as NatProperties
 open import Relation.Nullary.Decidable using (yes; no)
+open import Data.Empty using (⊥-elim)
 open Nat using (ℕ; zero; suc)
 open import Data.Nat.ListAction using (product)
 open import Data.Nat.ListAction.Properties using (product-++)
@@ -176,3 +177,97 @@ same-number⇒same-prime-multiplicities key left right left-prime right-prime eq
   multiplicity-permutation key
     (same-number⇒same-prime-multiset
       left right left-prime right-prime eq)
+
+-- The count contribution of a base equal to the chosen prime is 1,
+-- and that of a provably different base is zero.
+indicator-self : (p : ℕ) → indicator p p ≡ 1
+indicator-self p with NatProperties._≟_ p p
+... | yes _ = Eq.refl
+... | no p≢p = ⊥-elim (p≢p Eq.refl)
+
+indicator-other : (p q : ℕ) → p Eq.≢ q → indicator p q ≡ 0
+indicator-other p q p≢q with NatProperties._≟_ p q
+... | yes p≡q = ⊥-elim (p≢q p≡q)
+... | no _ = Eq.refl
+
+multiplicity-append : (key : ℕ) (xs ys : List ℕ)
+  → multiplicity key (xs ++ ys)
+    ≡ Nat._+_ (multiplicity key xs) (multiplicity key ys)
+multiplicity-append key [] ys = Eq.refl
+multiplicity-append key (x ∷ xs) ys =
+  Eq.trans
+    (Eq.cong (Nat._+_ (indicator key x))
+      (multiplicity-append key xs ys))
+    (Eq.sym (NatProperties.+-assoc
+      (indicator key x) (multiplicity key xs) (multiplicity key ys)))
+
+multiplicity-replicate-self : (p exponent : ℕ)
+  → multiplicity p (replicate exponent p) ≡ exponent
+multiplicity-replicate-self p zero = Eq.refl
+multiplicity-replicate-self p (suc exponent)
+  rewrite indicator-self p
+        | multiplicity-replicate-self p exponent = Eq.refl
+
+multiplicity-replicate-other : (p q exponent : ℕ)
+  → p Eq.≢ q → multiplicity p (replicate exponent q) ≡ 0
+multiplicity-replicate-other p q zero different = Eq.refl
+multiplicity-replicate-other p q (suc exponent) different
+  rewrite indicator-other p q different
+        | multiplicity-replicate-other p q exponent different = Eq.refl
+
+-- A base excluded from every input pair never occurs in its
+-- expanded prime list. This is independent of primality of the bases.
+multiplicity-absent : (p : ℕ) (pairs : List (ℕ × ℕ))
+  → All (λ pair → p Eq.≢ proj₁ pair) pairs
+  → multiplicity p (expanded-primes pairs) ≡ 0
+multiplicity-absent p [] [] = Eq.refl
+multiplicity-absent p ((q , exponent) ∷ rest) (p≢q ∷ absent-rest) =
+  Eq.trans
+    (multiplicity-append p (replicate exponent q) (expanded-primes rest))
+    (Eq.trans
+      (Eq.cong₂ Nat._+_
+        (multiplicity-replicate-other p q exponent p≢q)
+        (multiplicity-absent p rest absent-rest))
+      Eq.refl)
+
+-- If a prime p occurs once in the *base list*, its exact exponent
+-- is recovered by counting p in the expanded factorisation.
+multiplicity-head : (p exponent : ℕ) (rest : List (ℕ × ℕ))
+  → All (λ pair → p Eq.≢ proj₁ pair) rest
+  → multiplicity p (expanded-primes ((p , exponent) ∷ rest)) ≡ exponent
+multiplicity-head p exponent rest p-absent =
+  Eq.trans
+    (multiplicity-append p (replicate exponent p) (expanded-primes rest))
+    (Eq.trans
+      (Eq.cong₂ Nat._+_
+        (multiplicity-replicate-self p exponent)
+        (multiplicity-absent p rest p-absent))
+      (NatProperties.+-identityʳ exponent))
+
+-- An actual injectivity theorem for one chosen exponent coordinate.
+-- The two assignments may have differently ordered *other* primes,
+-- but each excludes p. Exact equality of the represented integers
+-- forces equality of p's exponents.
+same-number⇒same-head-exponent
+  : (p left-exponent right-exponent : ℕ)
+  → (left-rest right-rest : List (ℕ × ℕ))
+  → All (λ pair → Prime (proj₁ pair))
+      ((p , left-exponent) ∷ left-rest)
+  → All (λ pair → Prime (proj₁ pair))
+      ((p , right-exponent) ∷ right-rest)
+  → All (λ pair → p Eq.≢ proj₁ pair) left-rest
+  → All (λ pair → p Eq.≢ proj₁ pair) right-rest
+  → prime-power-number ((p , left-exponent) ∷ left-rest)
+    ≡ prime-power-number ((p , right-exponent) ∷ right-rest)
+  → left-exponent ≡ right-exponent
+same-number⇒same-head-exponent p left-exponent right-exponent
+  left-rest right-rest left-primes right-primes
+  left-distinct right-distinct eq =
+  Eq.trans
+    (Eq.sym (multiplicity-head p left-exponent left-rest left-distinct))
+    (Eq.trans
+      (same-number⇒same-prime-multiplicities p
+        ((p , left-exponent) ∷ left-rest)
+        ((p , right-exponent) ∷ right-rest)
+        left-primes right-primes eq)
+      (multiplicity-head p right-exponent right-rest right-distinct))
