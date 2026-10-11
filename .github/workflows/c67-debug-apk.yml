@@ -44,6 +44,9 @@ jobs:
           java-version: '17'
 
       - uses: android-actions/setup-android@v3
+        with:
+          # Default 'tools' package was removed from current Google repositories.
+          packages: 'platform-tools'
 
       - name: Android platform tools
         run: sdkmanager "platforms;android-36" "build-tools;36.0.0"
