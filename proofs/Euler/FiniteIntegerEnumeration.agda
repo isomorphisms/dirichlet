@@ -15,6 +15,7 @@ module Euler.FiniteIntegerEnumeration where
 -- the exponent enumeration, and must not be assumed from this file.
 
 open import Data.Nat.Base using (ℕ; zero; suc; _<_)
+import Data.Nat.Base as Nat
 import Data.Nat.Properties as NatProperties
 open import Data.List.Base
   using (List; []; _∷_; _++_; map; concatMap; downFrom)
@@ -325,11 +326,8 @@ module OverRing {c ℓ} (R : CommutativeRing c ℓ) where
     (coefficient : ℕ → Carrier)
     (coefficient-one : coefficient 1 ≈ 1#)
     (coefficient-times : (left right : ℕ)
-      → coefficient (Data.Nat.Base._*_ left right)
+      → coefficient (Nat._*_ left right)
         ≈ coefficient left * coefficient right) where
-
-    open Euler.BoundedArithmeticSums.OverRing R
-      using (sum-assignments)
 
     module Arith = Euler.BoundedArithmeticSums.OverRing R
     open Arith.ForCompletelyMultiplicative
