@@ -17,7 +17,7 @@ open import Data.Product.Base using (_,_)
 open import Data.Unit.Base using (tt)
 open import Euler.PrimeExponentInjectivity
   using (ExponentAssignment; expanded-primes; encode)
-open import Euler.PrimeFactorWeights
+import Euler.PrimeFactorWeights
 open import Geometric.General
 
 module OverRing {c ℓ} (R : CommutativeRing c ℓ) where
