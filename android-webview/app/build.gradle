@@ -4,10 +4,19 @@ plugins {
 
 // Copy the existing tested WebGL2 viewer verbatim. Do not fork its mathematics.
 def generatedAssets = layout.buildDirectory.dir('generated/dirichlet-assets').get().asFile
+def observedCommit = System.getenv('GITHUB_SHA') ?: ''
+def sourceCommit = (observedCommit ==~ /^[0-9a-f]{40}$/) ? observedCommit : 'unverified-local'
 tasks.register('syncDirichletWeb', Copy) {
     from rootProject.file('../web')
     into new File(generatedAssets, 'web')
     include '*.html', '*.mjs', '*.in'
+    inputs.property('sourceCommit', sourceCommit)
+    doLast {
+        def receipt = new File(generatedAssets, 'web/build-receipt.json')
+        receipt.parentFile.mkdirs()
+        receipt.text = '{"source_commit":"' + sourceCommit +
+            '","version_code":2,"renderer":"WebView/WebGL2"}\n'
+    }
 }
 
 android {
@@ -28,8 +37,8 @@ android {
         applicationId 'org.isomorphisms.dirichlet.viewer'
         minSdk 26
         targetSdk 35
-        versionCode 1
-        versionName '0.1-c67-test'
+        versionCode 2
+        versionName '0.2-c67-numeric-test'
     }
     buildTypes {
         debug {
