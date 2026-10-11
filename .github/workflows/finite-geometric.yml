@@ -1,4 +1,4 @@
-name: Formal Euler factorization proofs
+name: Formal Euler factorization and coefficient proofs
 
 on:
   push:
@@ -31,6 +31,7 @@ jobs:
           agda --safe -i proofs proofs/Euler/PrimeFactorWeights.agda
           agda --safe -i proofs proofs/Euler/PrimeExponentInjectivity.agda
           agda --safe -i proofs proofs/Euler/PrimeExponentSurjectivity.agda
+          agda --safe -i proofs proofs/Euler/CoefficientAssignmentWeights.agda
 
   # Idriç is not marked green by this lane. Before enabling an Idriç job,
   # supply a pinned, runnable compiler and record its true target/backend.
