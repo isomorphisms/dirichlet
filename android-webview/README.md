@@ -8,9 +8,12 @@ origin so JavaScript modules, fetch(), and WebGL2 can work in a WebView.
 
 The APK runs on Android 8+; it contains no architecture-specific native code,
 so it supports both 32-bit and 64-bit Android userspace. GLES 3.0 is required.
-The target C67 is **not yet tested**. This experiment diagnoses actual WebView
-WebGL2 and shader behavior on a physical phone; it does not certify a NativeActivity
-GLES target or physical-device driver compatibility.
+The user reported successful physical C67 installation and supplied
+screenshots of the weighted finite Dirichlet sum and a chi3 finite Euler
+product from the version-1 APK. That establishes observable installation and
+rendering, **not** GPU numerical accuracy or an independent device receipt.
+Version 2 adds on-device numeric checks; it is not yet device-tested.
+The WebView host is not a native NativeActivity/GLES qualification.
 
 ## Install on C67
 
@@ -28,10 +31,24 @@ for first paint. Failure is displayed in the viewer's status area, not hidden
 by fabricated offline colors.
 
 Test: switch weights chi4/chi3/chi1; switch finite sum, local factor, finite
-product and geometric polynomial; pan, pinch, probe values and reset. The
-`?smoke=1` startup requests a real center-pixel readback and sets an internal
-smoke evidence attribute. Browser-host CI results are not physical C67 evidence.
+product and geometric polynomial; pan, pinch, probe values and reset. Scroll
+to **Device graphics diagnostics** and tap **Check 171 GPU values**.
+This compiles the same GLSL math as the displayed portrait with its float32
+capture switch, draws into a 1×1 RGBA8 framebuffer and reads real and
+imaginary components back independently; every value is checked against
+the reference JavaScript implementation. The report shows the failure count,
+worst absolute complex error, GL renderer/version, source commit and elapsed
+time. For failures it also shows the exact first offending inputs. Screenshot
+or copy the report back into the development conversation; there is no
+automatic telemetry upload.
 
+The APK source revision is embedded in `web/build-receipt.json` and checked
+against the CI commit before publication. The existing `?smoke=1` startup
+still tests a visible center pixel, independently of the 171-point test.
+The browser-host CI result is not a physical C67 pass.
+
+The version-2 package keeps exactly the same ID and stable test signer as the
+working version-1 APK, allowing a normal Android update without uninstalling.
 The package ID is `org.isomorphisms.dirichlet.viewer`; it does not replace L
 or Wegert. The APK uses the stable, **publicly known and untrusted** Wegert
 test signer at immutable commit `873d03e` and checks its certificate fingerprint.
