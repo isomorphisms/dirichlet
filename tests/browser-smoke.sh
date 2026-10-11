@@ -25,6 +25,21 @@ for mode in 0 1 2 3; do
   test -s "/tmp/dirichlet-browser-portrait-$mode.png"
   echo "Mode $mode: $(grep -oE 'data-smoke-pixel="[0-9,]+"' "/tmp/dirichlet-dom-$mode.html")"
 done
+# Prove the URL-selected generated-character control is not only a hidden
+# numerical test: the visible shader actually renders the selected character.
+for specimen in '5,1' '128,15'; do
+  modulus="${specimen%,*}"
+  index="${specimen#*,}"
+  url="http://127.0.0.1:8098/web/?smoke=1&model=2&character=7&modulus=$modulus&index=$index"
+  "$chrome" --headless=new --no-sandbox --disable-dev-shm-usage --enable-unsafe-swiftshader --use-angle=swiftshader --use-gl=angle --enable-webgl --virtual-time-budget=15000 --window-size=1280,900 --user-data-dir="/tmp/dirichlet-chrome-generated-$modulus" --dump-dom "$url" >"/tmp/dirichlet-generated-$modulus.html" 2>"/tmp/dirichlet-generated-$modulus.log"
+  if ! grep -Eq 'data-smoke-pixel="[0-9]+,[0-9]+,[0-9]+,255"' "/tmp/dirichlet-generated-$modulus.html"; then
+    echo "No live WebGL2 generated character readback q=$modulus k=$index"
+    tail -n 30 "/tmp/dirichlet-generated-$modulus.log" || true
+    exit 1
+  fi
+  grep -q "χ($modulus,$index)" "/tmp/dirichlet-generated-$modulus.html"
+  grep -q 'WebGL2 GLSL linked' "/tmp/dirichlet-generated-$modulus.html"
+done
 echo "Four actual WebGL2 Wegert GLSL portraits passed (headless browser, not Android)"
 
 parity_url="http://127.0.0.1:8098/tests/shader-parity.html"
