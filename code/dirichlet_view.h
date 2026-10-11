@@ -2,6 +2,7 @@
 #define DIRICHLET_VIEW_H
 
 #include <stdbool.h>
+#include "characters.h"
 
 /* Android GLES3 / WebGL2 uniform ABI. This struct is source-only and
    contains no Android or OpenGL dependencies. All four function modes
@@ -18,6 +19,8 @@ struct dirichlet_view {
     unsigned cutoff;
     unsigned prime;
     unsigned character;
+    bool uses_generated;
+    struct dirichlet_character generated_character;
     float center_x;
     float center_y;
     float half_height;
@@ -31,6 +34,10 @@ struct dirichlet_glsl_uniforms {
     int cutoff; /* u_cutoff */
     int prime; /* u_prime */
     int character; /* u_character */
+    int uses_generated; /* u_generated */
+    int generated_modulus; /* u_generated_modulus */
+    int generated_denominator; /* u_generated_denominator */
+    int generated_phases[DIRICHLET_CHARACTER_MAX_MODULUS]; /* u_generated_phases */ 
 };
 
 void dirichlet_view_initialize(struct dirichlet_view *view);
@@ -38,6 +45,8 @@ bool dirichlet_view_select(struct dirichlet_view *view, enum dirichlet_view_mode
 bool dirichlet_view_set_cutoff(struct dirichlet_view *view, unsigned cutoff);
 bool dirichlet_view_set_prime(struct dirichlet_view *view, unsigned prime);
 bool dirichlet_view_set_character(struct dirichlet_view *view, unsigned character);
+bool dirichlet_view_set_generated(
+    struct dirichlet_view *view, unsigned modulus, unsigned character_index);
 bool dirichlet_view_pan_pixels(
     struct dirichlet_view *view,
     float delta_x, float delta_y, float screen_height

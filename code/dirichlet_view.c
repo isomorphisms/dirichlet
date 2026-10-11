@@ -29,6 +29,7 @@ void dirichlet_view_initialize(struct dirichlet_view *view) {
     view->cutoff = 4u;
     view->prime = 3u;
     view->character = DIRICHLET_CHI4;
+    view->uses_generated = false;
     reset_camera(view);
 }
 
@@ -73,6 +74,19 @@ bool dirichlet_view_set_prime(struct dirichlet_view *view, unsigned prime) {
 bool dirichlet_view_set_character(struct dirichlet_view *view, unsigned character) {
     if (view == NULL || character >= DIRICHLET_CHARACTER_COUNT) return false;
     view->character = character;
+    view->uses_generated = false;
+    return true;
+}
+
+bool dirichlet_view_set_generated(
+    struct dirichlet_view *view, unsigned modulus, unsigned character_index
+) {
+    if (view == NULL) return false;
+    struct dirichlet_character candidate;
+    if (!dirichlet_characters_generate(modulus,character_index,&candidate) ||
+        !dirichlet_characters_verify(&candidate)) return false;
+    view->generated_character=candidate;
+    view->uses_generated=true;
     return true;
 }
 
@@ -133,17 +147,33 @@ bool dirichlet_view_uniforms(
     float width, float height,
     struct dirichlet_glsl_uniforms *out
 ) {
-    if (view == NULL || out == NULL || !dimensions(width,height)) return false;
+    if (view == NULL || out == NULL || !dimensions(width,height) ||
+        view->character >= DIRICHLET_CHARACTER_COUNT) return false;
     float aspect = width / height;
     if (!isfinite(aspect)) return false;
-    out->center[0] = view->center_x;
-    out->center[1] = view->center_y;
-    out->half_height = view->half_height;
-    out->aspect = aspect;
-    out->model = (int)view->model;
-    out->cutoff = (int)view->cutoff;
-    out->prime = (int)view->prime;
-    if (view->character >= DIRICHLET_CHARACTER_COUNT) return false;
-    out->character = (int)view->character;
+    struct dirichlet_glsl_uniforms candidate = {0};
+    candidate.center[0] = view->center_x;
+    candidate.center[1] = view->center_y;
+    candidate.half_height = view->half_height;
+    candidate.aspect = aspect;
+    candidate.model = (int)view->model;
+    candidate.cutoff = (int)view->cutoff;
+    candidate.prime = (int)view->prime;
+    candidate.character = (int)view->character;
+    candidate.uses_generated = view->uses_generated ? 1 : 0;
+    for (unsigned n=0u;n<DIRICHLET_CHARACTER_MAX_MODULUS;++n)
+        candidate.generated_phases[n]=-1;
+    if (view->uses_generated) {
+        const struct dirichlet_character *c=&view->generated_character;
+        if (!dirichlet_characters_verify(c)) return false;
+        candidate.generated_modulus=(int)c->modulus;
+        candidate.generated_denominator=(int)c->phase_denominator;
+        for (unsigned n=0u;n<c->modulus;++n)
+            candidate.generated_phases[n]=(int)c->phase[n];
+    } else {
+        candidate.generated_modulus=1;
+        candidate.generated_denominator=1;
+    }
+    *out=candidate;
     return true;
 }

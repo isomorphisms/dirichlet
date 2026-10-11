@@ -23,7 +23,7 @@
     h2 { font-size: .95rem; font-weight: 650; margin: 0 0 15px; }
     .control { display: grid; gap: 7px; margin: 0 0 16px; }
     .control label { color: #c9d2d2; font-size: .88rem; }
-    select, button { min-height: 40px; padding: 8px 10px; color: inherit; background: #2c373f; border: 1px solid #65717a; border-radius: 5px; width: 100%; font: inherit; }
+    select, input[type=number], button { min-height: 40px; padding: 8px 10px; color: inherit; background: #2c373f; border: 1px solid #65717a; border-radius: 5px; width: 100%; font: inherit; }
     select:focus-visible, input:focus-visible, button:focus-visible { outline: 2px solid #ccdecf; outline-offset: 2px; }
     button { cursor: pointer; } button:hover { background: #3a454f; }
     input[type=range] { width: 100%; accent-color: #ced9cd; }
@@ -78,7 +78,16 @@
           <option value="4">χ₈ · primitive even modulo 8</option>
           <option value="5">χ₀,₄ · principal modulo 4</option>
           <option value="6">χ₁ · principal modulo 1 (ζ)</option>
+          <option value="7">Generate χ modulo q</option>
         </select>
+      </div>
+      <div class="control" id="generated-modulus-row" hidden>
+        <label for="generated-modulus">Modulus q (1–128)</label>
+        <input id="generated-modulus" type="number" min="1" max="128" step="1" value="5">
+      </div>
+      <div class="control" id="generated-index-row" hidden>
+        <label for="generated-index">Character index k (0…φ(q)−1)</label>
+        <select id="generated-index"></select>
       </div>
       <div class="control" id="cutoff-row">
         <label for="cutoff"><span id="cutoff-label">Number of terms N</span>: <strong class="value" id="cutoff-value">4</strong></label>

@@ -14,6 +14,13 @@ uniform int u_model;
 uniform int u_cutoff;
 uniform int u_prime;
 uniform int u_character;
+/* Generated character payload: exact phase exponents supplied by the host.
+   -1 is a nonunit; all other entries are in [0, denominator).
+   This path does not use a list of guessed zeros or poles. */
+uniform int u_generated;
+uniform int u_generated_modulus;
+uniform int u_generated_denominator;
+uniform int u_generated_phases[128];
 #ifdef DIRICHLET_NUMERIC_CAPTURE
 uniform int u_capture_component;
 #endif
@@ -36,6 +43,15 @@ vec2 n_to_minus_s(float n, vec2 s) {
     return radius * vec2(cos(angle), sin(angle));
 }
 vec2 character_value(int id, int n) {
+    if (u_generated != 0) {
+        int residue = n % u_generated_modulus;
+        int exponent = u_generated_phases[residue];
+        if (exponent < 0) return vec2(0.0);
+        if (exponent == 0) return vec2(1.0,0.0);
+        float theta = 6.2831853071795864769 *
+            float(exponent) / float(u_generated_denominator);
+        return vec2(cos(theta),sin(theta));
+    }
     if (id == 0 || id == 5) {
         int r = n % 4;
         if (r == 1) return vec2(1.0,0.0);

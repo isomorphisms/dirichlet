@@ -1,4 +1,8 @@
-import {CHARACTERS,characterValue,evaluate} from "./eval.mjs";
+import {CHARACTERS,characterValue} from "./eval.mjs";
+import {MAX_MODULUS,characterCount,generateCharacter,characterValue as generatedValue}
+  from "./characters.mjs";
+import {GENERATED_CHARACTER_ID,evaluateSelected,shaderCharacterPayload}
+  from "./character-selection.mjs";
 
 const WEGERT_REVISION = "873d03e86ec2e4a9236bb2d253fee3c8fde83b6c";
 const WEGERT_COLOR_URL =
@@ -8,6 +12,10 @@ const WEGERT_COLOR_URL =
 const byId = id => document.getElementById(id);
 const canvas = byId("portrait"), modelInput = byId("model");
 const characterInput = byId("character"), characterRow = byId("character-row");
+const generatedModulusInput = byId("generated-modulus");
+const generatedIndexInput = byId("generated-index");
+const generatedModulusRow = byId("generated-modulus-row");
+const generatedIndexRow = byId("generated-index-row");
 const cutoffInput = byId("cutoff"), cutoffRow = byId("cutoff-row");
 const primeInput = byId("prime"), primeRow = byId("prime-row");
 const cutoffLabel = byId("cutoff-label"), cutoffValue = byId("cutoff-value");
@@ -24,10 +32,40 @@ const specs = [
   {min:1,max:127,initial:31,label:"Last integer N"},
   {min:2,max:31,initial:13,label:"Last prime bound P"}
 ];
+let generatedCharacter = generateCharacter(5,1);
 const model = () => Number(modelInput.value);
 const character = () => Number(characterInput.value);
 const cutoff = () => Number(cutoffInput.value);
 const prime = () => Number(primeInput.value);
+const useGenerated = () => character()===GENERATED_CHARACTER_ID;
+const currentSelection = () => useGenerated()?generatedCharacter:character();
+function populateGenerated(modulus,index=1) {
+  const count=characterCount(modulus);
+  if (!count) return false;
+  const choices=document.createDocumentFragment();
+  for (let k=0;k<count;k++) {
+    const candidate=generateCharacter(modulus,k);
+    const option=document.createElement("option");
+    option.value=String(k);
+    option.textContent="k="+k+" · conductor "+candidate.conductor+
+      " · "+(candidate.parity?"odd":"even")+
+      " · value order "+candidate.valueOrder+
+      (candidate.primitive?" · primitive":"");
+    choices.appendChild(option);
+  }
+  generatedIndexInput.replaceChildren(choices);
+  const chosen=Number.isInteger(index) && index>=0 && index<count?
+    index:(count>1?1:0);
+  generatedIndexInput.value=String(chosen);
+  generatedModulusInput.value=String(modulus);
+  generatedCharacter=generateCharacter(modulus,chosen);
+  return true;
+}
+function showGeneratedControls() {
+  const visible=model()!==0 && useGenerated();
+  generatedModulusRow.hidden=!visible;
+  generatedIndexRow.hidden=!visible;
+}
 const clamp = (x,a,b) => Math.min(b,Math.max(a,x));
 function formatNumber(x) {
   if (!Number.isFinite(x)) return String(x);
@@ -42,7 +80,7 @@ function formatComplex(z) {
 function probeAt(z) {
   probePoint = [...z];
   try {
-    const v = evaluate(model(),cutoff(),prime(),z), mag = Math.hypot(v[0],v[1]);
+    const v = evaluateSelected(model(),cutoff(),prime(),z,currentSelection()), mag = Math.hypot(v[0],v[1]);
     const extra = Number.isFinite(mag) && mag > 0 ?
       "\narg = " + formatNumber(Math.atan2(v[1],v[0])) +
       " rad · ln|f| = " + formatNumber(Math.log(mag)) : "";
@@ -51,35 +89,45 @@ function probeAt(z) {
   } catch(e) { probe.textContent = "Probe error: " + e.message; }
 }
 function updateMathText() {
-  const n=cutoff(), p=prime(), m=model();
-  const definition=CHARACTERS[character()], chi=definition.symbol;
+  const n=cutoff(),p=prime(),m=model();
+  const generated=useGenerated();
+  const descriptor=generated ? {
+    symbol:"χ("+generatedCharacter.modulus+","+generatedCharacter.index+")",
+    modulus:generatedCharacter.modulus,
+    principal:generatedCharacter.valueOrder===1
+  } : CHARACTERS[character()];
+  const chi=descriptor.symbol;
   if (m===0) {
     formula.textContent="G("+n+",q) = Σ[k=0…"+(n-1)+"] q^k";
     scope.textContent="A finite polynomial. At q=1 its value is "+n+
       ", not a pole. For N=4 its zeros are −1, +i and −i.";
     plane.textContent="q-plane · finite polynomial";
   } else if (m===1) {
-    const value=characterValue(character(),p);
+    const value=generated?generatedValue(generatedCharacter,p):characterValue(character(),p);
     formula.textContent="1/(1 − "+chi+"("+p+")·"+p+"^(−s))"+
       "\n"+chi+"("+p+") = "+formatComplex(value);
-    scope.textContent="One meromorphic local Euler factor of a character modulo "+
-      definition.modulus+", not the global L-function.";
+    scope.textContent="One meromorphic Euler factor for a character modulo "+
+      descriptor.modulus+", not the global L-function.";
     plane.textContent="s-plane · one Euler factor";
   } else if (m===2) {
     formula.textContent="S("+n+",s) = Σ[j=1…"+n+"] "+chi+"(j)j^(−s)";
     scope.textContent="Finite and entire. "+
-      (definition.principal ?
-        "The underlying principal-character series converges for Re(s)>1 and has a pole at s=1." :
-        "The underlying nonprincipal Dirichlet series converges for Re(s)>0, absolutely for Re(s)>1.")+
-      " A finite sum does not supply analytic continuation.";
+      (descriptor.principal ?
+        "The principal-character series converges for Re(s)>1 and has a pole at s=1." :
+        "The nonprincipal-character series converges for Re(s)>0, absolutely for Re(s)>1.")+
+      " Finite sums do not supply analytic continuation.";
     plane.textContent="s-plane · finite Dirichlet sum";
   } else {
     formula.textContent="P("+n+",s) = ∏[prime p≤"+n+"] (1−"+chi+"(p)p^(−s))^(−1)";
-    scope.textContent="Finite meromorphic product for a character modulo "+
-      definition.modulus+". The infinite Euler product equals L(s,"+chi+
-      ") in Re(s)>1 only. Outside this half-plane the finite portrait is NOT L-function continuation.";
+    scope.textContent="Finite meromorphic product, modulus "+descriptor.modulus+
+      ". The infinite Euler product equals L(s,"+chi+
+      ") for Re(s)>1. The finite product is not an analytic continuation.";
     plane.textContent="s-plane · finite Euler product";
   }
+  if (generated && m!==0)
+    scope.textContent+=" Conductor "+generatedCharacter.conductor+
+      ", "+(generatedCharacter.parity?"odd":"even")+
+      ", character order "+generatedCharacter.valueOrder+".";
 }
 function resetCamera() {
   if (model()===0) {center=[0,0];halfHeight=1.6;}
@@ -90,6 +138,7 @@ function chooseModel() {
   const m=model(), spec=specs[m];
   cutoffRow.hidden=m===1; primeRow.hidden=m!==1;
   characterRow.hidden=m===0;
+  showGeneratedControls();
   cutoffInput.min=String(spec.min); cutoffInput.max=String(spec.max);
   cutoffInput.value=String(spec.initial);
   cutoffLabel.textContent=spec.label; cutoffValue.textContent=String(spec.initial);
@@ -115,7 +164,12 @@ function render() {
   gl.uniform1i(uniforms.model,model());
   gl.uniform1i(uniforms.cutoff,cutoff());
   gl.uniform1i(uniforms.prime,prime());
-  gl.uniform1i(uniforms.character,character());
+  const payload=shaderCharacterPayload(currentSelection());
+  gl.uniform1i(uniforms.character,payload.character);
+  gl.uniform1i(uniforms.generated,payload.generated);
+  gl.uniform1i(uniforms.modulus,payload.modulus);
+  gl.uniform1i(uniforms.denominator,payload.denominator);
+  gl.uniform1iv(uniforms.phases,payload.phases);
   gl.drawArrays(gl.TRIANGLES,0,3);
   // Opt-in proof of actual browser draw and readback (not Android evidence).
   if (new URLSearchParams(location.search).get('smoke') === '1') {
@@ -186,7 +240,28 @@ cutoffInput.addEventListener("input",()=>{
   cutoffValue.textContent=cutoffInput.value;updateMathText();probeAt(probePoint);queueDraw();
 });
 primeInput.addEventListener("change",()=>{updateMathText();probeAt(probePoint);queueDraw();});
-characterInput.addEventListener("change",()=>{updateMathText();probeAt(probePoint);queueDraw();});
+characterInput.addEventListener("change",()=>{
+  showGeneratedControls();updateMathText();probeAt(probePoint);queueDraw();
+});
+generatedModulusInput.addEventListener("change",()=>{
+  const n=Number(generatedModulusInput.value);
+  if (!Number.isInteger(n) || n<1 || n>MAX_MODULUS) {
+    generatedModulusInput.value=String(generatedCharacter.modulus);
+    status.textContent="Invalid modulus: enter an integer from 1 to "+MAX_MODULUS;
+    return;
+  }
+  populateGenerated(n);
+  updateMathText();probeAt(probePoint);queueDraw();
+});
+generatedIndexInput.addEventListener("change",()=>{
+  const k=Number(generatedIndexInput.value);
+  if (!Number.isInteger(k) || k<0 || k>=characterCount(generatedCharacter.modulus)) {
+    generatedIndexInput.value=String(generatedCharacter.index);
+    return;
+  }
+  generatedCharacter=generateCharacter(generatedCharacter.modulus,k);
+  updateMathText();probeAt(probePoint);queueDraw();
+});
 byId("reset").addEventListener("click",resetCamera);
 
 function compiled(type,source) {
@@ -229,8 +304,14 @@ async function initialize() {
     for (const [key,name] of Object.entries({
       center:"u_center",halfHeight:"u_half_height",aspect:"u_aspect",
       model:"u_model",cutoff:"u_cutoff",prime:"u_prime",
-      character:"u_character"
-    })) uniforms[key]=gl.getUniformLocation(program,name);
+      character:"u_character",generated:"u_generated",
+      modulus:"u_generated_modulus",denominator:"u_generated_denominator",
+      phases:"u_generated_phases[0]"
+    })) {
+      const location=gl.getUniformLocation(program,name);
+      if (location===null) throw new Error("Missing GLSL uniform "+name);
+      uniforms[key]=location;
+    }
     status.textContent="WebGL2 GLSL linked. Browser renderer: "+gl.getParameter(gl.RENDERER)+
       "; pinned Wegert "+WEGERT_REVISION.slice(0,12)+
       ". No physical-device qualification.";
@@ -244,8 +325,14 @@ if (gl) canvas.addEventListener("webglcontextlost",e=>{
 const initial = new URLSearchParams(location.search);
 if (['0','1','2','3'].includes(initial.get('model')))
   modelInput.value = initial.get('model');
-if (initial.has("character") && CHARACTERS[Number(initial.get("character"))])
+if (initial.has("character") &&
+    [...characterInput.options].some(o=>o.value===initial.get("character")))
   characterInput.value=initial.get("character");
+const initialModulus=Number(initial.get("modulus")??"5");
+const modulus=Number.isInteger(initialModulus) &&
+  initialModulus>=1 && initialModulus<=MAX_MODULUS?initialModulus:5;
+const initialIndex=Number(initial.get("index")??"1");
+populateGenerated(modulus,initialIndex);
 chooseModel();
 if (initial.has('prime') && [...primeInput.options].some(o=>o.value===initial.get('prime')))
   primeInput.value=initial.get('prime');

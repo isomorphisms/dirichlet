@@ -1,0 +1,46 @@
+name: Generated Dirichlet character mathematics and C ABI
+on:
+  push:
+    branches:
+      - main
+      - 'work/**'
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  generated-character-math:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Check exact finite-group generation, conductors, parity and orthogonality (C11)
+        run: |
+          cc -std=c11 -O2 -Wall -Wextra -Werror -pedantic \
+            code/characters.c code/dirichlet_eval.c tests/characters-host.c -lm \
+            -o /tmp/dirichlet-characters-host
+          /tmp/dirichlet-characters-host
+      - name: Check independent CRT construction and orthogonality (JavaScript)
+        run: node --test tests/characters.test.mjs
+      - name: Compare independent C11/JavaScript generated character values and finite sums/products
+        run: |
+          cc -std=c11 -O2 -Wall -Wextra -Werror -pedantic \
+            code/characters.c tests/characters-grid-cli.c -lm \
+            -o /tmp/dirichlet-characters-grid
+          node tests/characters-cpu-grid.mjs /tmp/dirichlet-characters-grid
+      - name: Build standalone Linux x86_64 shared object and test the real C ABI
+        run: |
+          cc -std=c11 -O2 -fPIC -shared -Wall -Wextra -Werror -pedantic \
+            code/characters.c -lm -o /tmp/libdirichlet_characters.so
+          cc -std=c11 -O2 -Wall -Wextra -Werror -pedantic \
+            tests/characters-dlopen.c -ldl -lm -o /tmp/dirichlet-characters-dlopen
+          /tmp/dirichlet-characters-dlopen /tmp/libdirichlet_characters.so
+          readelf -h /tmp/libdirichlet_characters.so | grep 'DYN (Shared object file)'
+          nm -D /tmp/libdirichlet_characters.so | grep -q ' T dirichlet_characters_generate$'
+      - name: Confirm JS syntax separately
+        run: |
+          node --check web/characters.mjs
+          node --check tests/characters-cpu-grid.mjs
