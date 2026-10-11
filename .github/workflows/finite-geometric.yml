@@ -25,6 +25,7 @@ jobs:
       - name: Check duplicate-free finite Euler integer sum and prerequisites
         run: |
           agda --version
+          agda --safe -i proofs proofs/Analysis/RationalTailBudget.agda
           agda --safe -i proofs proofs/Geometric/General.agda
           agda --safe -i proofs proofs/Geometric/Finite.agda
           agda --safe -i proofs proofs/Euler/FiniteExpansion.agda
@@ -36,7 +37,6 @@ jobs:
           agda --safe -i proofs proofs/Euler/BoundedSmoothSupport.agda
           agda --safe -i proofs proofs/Euler/FiniteIntegerEnumeration.agda
           agda --safe -i proofs proofs/Euler/FiniteIntegerNoDuplicates.agda
-          agda --safe -i proofs proofs/Analysis/RationalTailBudget.agda
 
   # Idriç is not marked green by this lane. Before enabling an Idriç job,
   # supply a pinned, runnable compiler and record its true target/backend.
