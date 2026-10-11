@@ -121,3 +121,7 @@ weights introduce additional multiplier/metaplectic structure.
 - [IAS lectures: verified topics, companion-paper expressions and evidence gaps](lectures/README.md)
 
 The entries in `functions/` contain provenance in both directions. Entries marked **companion paper** or **background** are *not* claimed to have been displayed in the associated lecture or dissertation.
+
+## Research papers and mathematical reading notes
+
+- [OpenAI (2026), *The Quasi-Riemann Hypothesis: A Zero-Free Half-Plane Re(s) > 7/8* — detailed mathematical walkthrough](../notes/quasi-riemann-hypothesis-2026.md). Reads the original 199-page manuscript, distinguishing the first (11/12) and refined (7/8) proof stages, dependencies, estimates, and verification limits. This is a **preprint claim**, not a locally rechecked formal proof.
