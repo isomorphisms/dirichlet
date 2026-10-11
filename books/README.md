@@ -1,6 +1,10 @@
 # Dirichlet reading list: PhD theses and IAS lectures on modular weights
 
 This is a source bibliography, not a declaration of features already implemented in Dirichlet.
+
+**Expanded summaries:** [IAS lecture notes on weights, cusp forms and L-functions](ias-lecture-notes.md).
+The notes distinguish lecture-page abstracts, supplementary papers, and mathematical context;
+no full-video transcript is claimed.
 For a classical modular form, the weight k and the character (nebentypus) chi
 are separate data. In particular, the coefficients chi(n) in a Dirichlet
 L-function are not by themselves the modular-form weight k. Half-integral
@@ -49,8 +53,9 @@ weights introduce additional multiplier/metaplectic structure.
 
 1. Bao V. Le Hung (2017-10-02), *Weights of mod p Automorphic Forms*.
    https://www.ias.edu/video/postdoc/20171002-BaoV.LeHung
-   Weights in mod-p automorphic theory; this use of weight is more
-   specialized than the integer k in classical holomorphic modular forms.
+   Mod-p automorphic / Serre weights: irreducible coefficient representations,
+   rather than merely an integer k. The short-talk listing lacks an abstract;
+   interpretive notes cite adjacent talks and papers, not an alleged transcript.
 
 2. Vincent Pilloni (2017-11-07), *Higher Hida Theory*.
    https://www.ias.edu/video/MotivesGaloisRepsandCohomology/2017/1107-VincentPilloni
@@ -68,11 +73,14 @@ weights introduce additional multiplier/metaplectic structure.
    Half-integral weight, metaplectic double covers, and an exceptional-group
    example of weight 1/2.
 
-5. Winnie Li (2022-10-13), *Modular Curves, Modular Forms and Hecke
-   Operators: Old and New*.
+5. Wen-Ching Winnie Li (2022-10-13), *Modular Curves, Modular Forms
+   and Hecke Operators: Old and New*.
    https://www.ias.edu/video/modular-curves-modular-forms-and-hecke-operators-old-and-new
-   Modular curves and Hecke theory: background for newforms and their
-   L-functions. Not primarily a lecture on weight alone.
+   Ogg's newform theory and Rankin-Selberg convolution; new Hecke-trace
+   method for even-weight cusp forms on certain triangle groups, including
+   cocompact Shimura-curve examples. The IAS video page mistakenly carries
+   Barry Mazur's abstract; use Li's own event description:
+   https://www.ias.edu/events/celebration-honor-frank-c-and-florence-s-professorship-2
 
 6. Xiannan Li (2022-12-08), *Quadratic Twists of Modular L-Functions*.
    https://www.ias.edu/video/quadratic-twists-modular-l-functions
