@@ -15,7 +15,7 @@ open import Algebra.Bundles using (CommutativeRing)
 import Data.Nat.Base as Nat
 open Nat using (ℕ)
 open import Data.List.Base using (List)
-open import Euler.DirichletCertificate
+open import Euler.DirichletCertificate using (DirichletCharacterCertificate)
 import Euler.CharacterExpansion as Expansion
 
 module OverCertifiedCharacter {c ℓ}
