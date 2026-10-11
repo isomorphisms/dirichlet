@@ -76,7 +76,7 @@ remove-common-head key p exponent left right full =
 -- Head recovery is a standalone lemma because Agda's with-expression
 -- is elaborated before a branch-local where block becomes available.
 head-count-equal
-  : (p : ℕ) {ps : List ℕ}
+  : (p : ℕ) (ps : List ℕ)
   → All (λ q → p ≢ q) ps
   → (e₁ e₂ : ℕ)
   → (es₁ es₂ : Vec.Vec ℕ (List.length ps))
@@ -86,14 +86,14 @@ head-count-equal
       ≡ multiplicity key
         (expanded-primes (assignment (p ∷ ps) (e₂ Vec.∷ es₂))))
   → e₁ ≡ e₂
-head-count-equal p absent-in-ps e₁ e₂ es₁ es₂ counts =
+head-count-equal p ps absent-in-ps e₁ e₂ es₁ es₂ counts =
   Eq.trans
     (Eq.sym
-      (multiplicity-head p e₁ (assignment _ es₁)
+      (multiplicity-head p e₁ (assignment ps es₁)
         (head-absent-from-tail absent-in-ps es₁)))
     (Eq.trans
       (counts p)
-      (multiplicity-head p e₂ (assignment _ es₂)
+      (multiplicity-head p e₂ (assignment ps es₂)
         (head-absent-from-tail absent-in-ps es₂)))
 
 -- For a fixed pairwise-distinct prime basis, equality of *all* prime
@@ -109,7 +109,7 @@ multiplicities⇒equal-vectors [] empty Vec.[] Vec.[] counts = Eq.refl
 multiplicities⇒equal-vectors (p ∷ ps)
   (cons p-prime absent-in-ps ps-prime)
   (e₁ Vec.∷ es₁) (e₂ Vec.∷ es₂) counts
-  with head-count-equal p absent-in-ps e₁ e₂ es₁ es₂ counts
+  with head-count-equal p ps absent-in-ps e₁ e₂ es₁ es₂ counts
 ... | Eq.refl =
   Eq.cong (Vec._∷_ e₁)
     (multiplicities⇒equal-vectors ps ps-prime es₁ es₂
