@@ -7,7 +7,7 @@ module Euler.QuadraticCharacterThree where
 -- and vanishing at nonunits all follow from Agda proofs.
 
 open import Data.Empty using (⊥-elim)
-open import Data.Nat.Base using (ℕ; zero; suc; _<_; _*_; _%_)
+open import Data.Nat.Base using (ℕ; zero; suc; s≤s; _<_; _*_; _%_)
 open import Data.Nat.GCD using (gcd)
 open import Relation.Binary.PropositionalEquality using (_≡_; _≢_; refl)
 import Data.Integer.Base as Int
@@ -32,22 +32,22 @@ product3 : (a b : ℕ) → a < 3 → b < 3
 product3 zero zero _ _ = refl
 product3 zero (suc zero) _ _ = refl
 product3 zero (suc (suc zero)) _ _ = refl
-product3 zero (suc (suc (suc n))) _ ()
+product3 zero (suc (suc (suc n))) _ (s≤s (s≤s (s≤s ())))
 product3 (suc zero) zero _ _ = refl
 product3 (suc zero) (suc zero) _ _ = refl
 product3 (suc zero) (suc (suc zero)) _ _ = refl
-product3 (suc zero) (suc (suc (suc n))) _ ()
+product3 (suc zero) (suc (suc (suc n))) _ (s≤s (s≤s (s≤s ())))
 product3 (suc (suc zero)) zero _ _ = refl
 product3 (suc (suc zero)) (suc zero) _ _ = refl
 product3 (suc (suc zero)) (suc (suc zero)) _ _ = refl
-product3 (suc (suc zero)) (suc (suc (suc n))) _ ()
-product3 (suc (suc (suc n))) b () _
+product3 (suc (suc zero)) (suc (suc (suc n))) _ (s≤s (s≤s (s≤s ())))
+product3 (suc (suc (suc n))) b (s≤s (s≤s (s≤s ()))) _
 
 nonunit3 : (a : ℕ) → a < 3 → gcd a 3 ≢ 1 → table3 a ≡ 0ℤ
 nonunit3 zero _ _ = refl
 nonunit3 (suc zero) _ nonunit = ⊥-elim (nonunit refl)
 nonunit3 (suc (suc zero)) _ nonunit = ⊥-elim (nonunit refl)
-nonunit3 (suc (suc (suc n))) () _
+nonunit3 (suc (suc (suc n))) (s≤s (s≤s (s≤s ()))) _
 
 finite3 : FiniteResidueCharacter ring 2
 finite3 = record
