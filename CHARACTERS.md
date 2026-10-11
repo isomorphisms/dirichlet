@@ -1,10 +1,12 @@
 # Generated Dirichlet characters: finite-group engine and C ABI
 
 This is an **arithmetic** module. It is deliberately independent of Wegert
-and of modular-form weights. The existing seven-character catalogue remains
-the stable live-GPU input in [draft PR #7](https://github.com/isomorphisms/dirichlet/pull/7).
-The generated-character engine here is a separate **CPU/reference and FFI**
-path; it has not yet been wired into the WebGL2/Android shader.
+and of modular-form weights. The original seven-character catalogue remains supported by
+[draft PR #7](https://github.com/isomorphisms/dirichlet/pull/7).
+The generated-character engine also feeds a source-level WebGL2/GLES3 uniform
+adapter: the host supplies modulus q, the phase denominator D and the 128
+integer residue exponents, with -1 for nonunits. This is shader *source and
+headless Chromium* acceptance, not a physical Android/PowerVR qualification.
 
 ## The mathematical object
 
@@ -101,6 +103,10 @@ must be versioned; it should not silently break users of the .so.
   independent C11/JS comparison of exact metadata and complex values.
 - `tests/characters-dlopen.c` — actual Linux dynamic linking and exported
   symbol/struct call checks.
+- `web/character-selection.mjs` — maps selected generated-character objects
+  to finite numerical probes and a 128-slot integer GLSL uniform table.
+- `web/dirichlet.frag.in` — real runtime-generated coefficients via the
+  host-provided `u_generated*` uniforms; no shader-side character reimplementation.
 
 Example shared-library build on Linux x86_64:
 
@@ -110,7 +116,9 @@ Example shared-library build on Linux x86_64:
 An external C caller can include `characters.h`, allocate a
 `struct dirichlet_character`, invoke
 `dirichlet_characters_generate(modulus,index,&output)`, and call
-`dirichlet_characters_verify(&output)` before use. That contract is
+`dirichlet_characters_verify(&output)` before use. The portable
+`dirichlet_view_set_generated` wrapper admits only such validated tables
+and exports the corresponding native GLES3 uniforms. That contract is
 suitable for a future Idriç FFI; it does not imply Idriç has already
 loaded, typechecked or proved anything about the library.
 
@@ -125,7 +133,7 @@ at s=1, and their finite sums are not analytic continuation.
 Do not confuse passing floating-point orthogonality fixtures with a
 formal proof. The finite-group *algebraic identities* are checked
 exhaustively within the host bound; arbitrary-modulus formalization
-in Agda/Idriç, verified device GPU ingestion of generated coefficients,
+in Agda/Idriç, **physical-device** GPU ingestion of generated coefficients,
 unbounded construction, analytic continuation, and global L-function
 Euler product proofs remain separate work.
 
