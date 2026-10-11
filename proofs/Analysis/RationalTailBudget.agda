@@ -47,10 +47,9 @@ finite-tail-plus-remainder weight budget step from zero =
 finite-tail-plus-remainder weight budget step from (suc count) =
   ℚP.≤-trans
     (ℚP.≤-reflexive
-      (sym
-        (ℚP.+-assoc (weight from)
-          (finite-tail weight (suc from) count)
-          (budget (end-index (suc from) count)))))
+      (ℚP.+-assoc (weight from)
+        (finite-tail weight (suc from) count)
+        (budget (end-index (suc from) count))))
     (ℚP.≤-trans
       (ℚP.+-monoʳ-≤ (weight from)
         (finite-tail-plus-remainder weight budget step
