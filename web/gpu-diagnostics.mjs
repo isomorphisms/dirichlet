@@ -166,10 +166,9 @@ export async function runGpuDiagnostics(visibleFragment, onProgress=()=>{}) {
           actual,expected,error:comparison.error,bound:comparison.bound
         });
       }
-      if (tested%32===0) {
-        onProgress(tested,numericCases.length);
-        await new Promise(resolve=>requestAnimationFrame(resolve));
-      }
+      // The 171 real readbacks finish in one bounded run. Waiting for
+      // animation frames can strand headless/browser smoke at partial grids.
+      if (tested%32===0) onProgress(tested,numericCases.length);
     }
     gl.finish();
     return {
