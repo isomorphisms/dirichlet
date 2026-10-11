@@ -18,11 +18,16 @@ bottom-navigation layout, and its analytically continued L-function shader.
 - code/dirichlet_view.h and .c: portable C11 controls. Geometric G(N,q),
   one local Euler factor, finite character-weighted sum, finite Euler product.
 - Controls supply u_center, u_half_height, u_aspect, u_model,
-  u_cutoff, u_prime, and u_character, exactly matching web/dirichlet.frag.in.
+  u_cutoff, u_prime, and u_character for seven presets. For a generated
+  character, also supply u_generated, u_generated_modulus,
+  u_generated_denominator, and the integer[128] u_generated_phases
+  array (-1 for nonunits), exactly matching web/dirichlet.frag.in.
 - Changing q-plane ↔ s-plane resets the view, while changing among s-plane
   evaluators preserves pan and zoom. Zoom preserves the point under a touch.
-- Cutoffs are bounded (32/127/31 respectively); invalid primes and invalid
-  dimensions and character selections fail closed. No dummy poles/zeros are introduced.
+- Cutoffs are bounded (32/127/31 respectively); invalid primes,
+  dimensions, fixed characters, and generated modulus/index pairs fail
+  closed. The generated selector is accepted only after C11 character
+  generation and exact-table verification. No dummy poles/zeros are introduced.
 - Host control tests do not need NDK headers, EGL, or an Android device.
 
 ## Native integration remaining
@@ -31,9 +36,12 @@ bottom-navigation layout, and its analytically continued L-function shader.
    an unrelated Android/Java control pipeline. Preserve its object/gesture
    behavior for L itself; do not relabel the three LMFDB neighbor chips.
 2. Use a separate Dirichlet target/application identity with four function
-   choices, a cutoff adjustment, prime and character selection, pan, pinch, and probe.
-   The NativeActivity should read the portable view struct and pass its
-   uniforms to the real compiled/linked Dirichlet shader program.
+   choices, a cutoff adjustment, prime, preset or generated character
+   selection, pan, pinch, and probe. The NativeActivity should read the
+   portable view struct, including all generated coefficient uniforms,
+   and pass them to the real compiled/linked Dirichlet shader program.
+   It must link code/characters.c and record the selected q/index and
+   physical uniform/program binding in its acceptance output.
 3. At build time assemble the GPL-3.0-or-later Wegert color shader from its
    immutable source revision; verify the expected source hash. There is no
    production/offline shader bundle here yet. Resolve combined-work
