@@ -45,6 +45,17 @@ all these fields allows the finite Euler theorem to be instantiated.
 This Agda module also proves that at any integer not coprime to the
 modulus, each nonempty finite local geometric factor has value 1.
 
+## A constructed character, not a postulated one
+
+`Euler.TrivialCharacter` supplies a complete certificate for the genuine
+modulus-one character χ₁(n)=1 over an arbitrary commutative ring. Its
+nonunit-support obligation follows from `gcd(n,1)=1`, and its
+multiplicativity from the ring's identity law. Thus
+`finite-trivial-character-euler` is an actual specialization of
+the finite arithmetic identity without an unproved character field.
+This is the finite geometric precursor to ζ; no infinite analytic
+claim follows from the certificate.
+
 ## How the C11/JS-generated characters are related, and what is missing
 
 The generator in draft #12 emits `q`, a root-of-unity denominator
