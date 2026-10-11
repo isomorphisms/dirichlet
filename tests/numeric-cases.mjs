@@ -1,8 +1,10 @@
 // Bounded, non-singular grid shared by independent C11, JS and WebGL2 evaluators.
 // All values use finite, moderate-size inputs suitable for float32 shader tests.
 const cases = [];
-const add = (mode,cutoff,prime,point,character=0) => {
-  cases.push(Object.freeze({mode,cutoff,prime,character,point:Object.freeze([...point])}));
+const add = (mode,cutoff,prime,point,character=0,modulus=0,index=0) => {
+  cases.push(Object.freeze({
+    mode,cutoff,prime,character,modulus,index,point:Object.freeze([...point])
+  }));
 };
 for (const n of [0,1,2,4,9,32])
   for (const q of [[1,0],[-1,0],[0,1],[0,-1],[0.2,0.3],[-0.65,0.1]])
@@ -22,5 +24,20 @@ for (const character of [1,2,3,4,5,6]) {
   for (const p of [2,3,5,7]) add(1,1,p,[2,0],character);
   for (const n of [3,31,127]) add(2,n,3,[1.3,0.9],character);
   for (const p of [3,13,31]) add(3,p,3,[1.4,0.8],character);
+}
+// Genuine generated CRT characters, with moduli including powers of two
+// and composite/noncyclic groups. These add real shader readback cases.
+const generated = [
+  [1,0],[2,0],[3,1],[4,1],[5,1],[5,3],
+  [8,2],[9,3],[12,1],[15,3],[16,3],[24,7],
+  [32,3],[45,7],[105,5],[127,12],[128,15]
+];
+for (const [modulus,index] of generated) {
+  add(1,0,2,[2,0],0,modulus,index);
+  add(1,0,3,[1.3,0.6],0,modulus,index);
+  add(2,31,3,[1.4,-0.4],0,modulus,index);
+  add(2,127,3,[2,0],0,modulus,index);
+  add(3,13,3,[1.3,0.5],0,modulus,index);
+  add(3,31,3,[2,0],0,modulus,index);
 }
 export const numericCases = Object.freeze(cases);
