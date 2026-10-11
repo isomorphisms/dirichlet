@@ -37,8 +37,10 @@ int main(void) {
         assert(principal.value_order==1u);
         assert(principal.conductor==1u);
         assert(principal.parity==0u);
+        struct dirichlet_character catalogue[DIRICHLET_CHARACTER_MAX_MODULUS];
         for (unsigned id=0u;id<count;++id) {
             struct dirichlet_character c=generated(modulus,id);
+            catalogue[id]=c;
             assert(c.modulus==modulus && c.index==id);
             assert(c.conductor>=1u && modulus%c.conductor==0u);
             assert(c.phase_denominator%c.value_order==0u);
@@ -51,10 +53,10 @@ int main(void) {
             }
             /* Enumeration must be injective: distinct indices, distinct tables. */
             for (unsigned prev=0u;prev<id;++prev) {
-                struct dirichlet_character other=generated(modulus,prev);
+                const struct dirichlet_character *other=&catalogue[prev];
                 unsigned distinguish=0u;
                 for (unsigned n=0u;n<modulus;++n)
-                    distinguish+=(c.phase[n]!=other.phase[n]);
+                    distinguish+=(c.phase[n]!=other->phase[n]);
                 assert(distinguish>0u);
             }
         }
