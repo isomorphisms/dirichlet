@@ -131,6 +131,21 @@ multiplicity key [] = 0
 multiplicity key (p ∷ ps) =
   Nat._+_ (indicator key p) (multiplicity key ps)
 
+-- Changing the order of two adjacent factors does not change the
+-- number of occurrences, regardless of the rest of the list.
+swap-count : (key p q : ℕ) {tail-count : ℕ}
+  → Nat._+_ (indicator key p) (Nat._+_ (indicator key q) tail-count)
+    ≡ Nat._+_ (indicator key q) (Nat._+_ (indicator key p) tail-count)
+swap-count key p q {tail-count} =
+  Eq.trans
+    (Eq.sym (NatProperties.+-assoc
+      (indicator key p) (indicator key q) tail-count))
+    (Eq.trans
+      (Eq.cong (λ x → Nat._+_ x tail-count)
+        (NatProperties.+-comm (indicator key p) (indicator key q)))
+      (NatProperties.+-assoc
+        (indicator key q) (indicator key p) tail-count))
+
 -- Every permutation preserves the count of every fixed prime.
 -- In the swap case this follows from natural-number commutativity;
 -- no equality of the *order* of the lists is assumed.
@@ -141,23 +156,14 @@ multiplicity-permutation key Permutation.refl = Eq.refl
 multiplicity-permutation key (Permutation.prep p permutation) =
   Eq.cong (Nat._+_ (indicator key p))
     (multiplicity-permutation key permutation)
-multiplicity-permutation key
-  (Permutation.swap p q {ys = ys} permutation) =
+multiplicity-permutation key (Permutation.swap p q permutation) =
   Eq.trans
     (Eq.cong
       (λ tail-count →
         Nat._+_ (indicator key p)
           (Nat._+_ (indicator key q) tail-count))
       (multiplicity-permutation key permutation))
-    (Eq.trans
-      (Eq.sym (NatProperties.+-assoc
-        (indicator key p) (indicator key q) (multiplicity key ys)))
-      (Eq.trans
-        (Eq.cong
-          (λ first-two → Nat._+_ first-two (multiplicity key ys))
-          (NatProperties.+-comm (indicator key p) (indicator key q)))
-        (NatProperties.+-assoc
-          (indicator key q) (indicator key p) (multiplicity key ys))))
+    (swap-count key p q)
 multiplicity-permutation key (Permutation.trans left right) =
   Eq.trans (multiplicity-permutation key left)
            (multiplicity-permutation key right)
