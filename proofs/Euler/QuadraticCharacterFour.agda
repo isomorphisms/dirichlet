@@ -9,8 +9,11 @@ module Euler.QuadraticCharacterFour where
 -- Euler.ResidueCharacter lifts those finite laws to ALL natural n.
 
 open import Data.Empty using (⊥-elim)
-open import Data.Nat.Base using (ℕ; zero; suc)
-open import Data.Integer.Base using (ℤ; 0ℤ; 1ℤ; -1ℤ)
+open import Data.Nat.Base using (ℕ; zero; suc; _<_; _*_; _%_)
+open import Data.Nat.GCD using (gcd)
+open import Relation.Binary.PropositionalEquality using (_≡_; _≢_; refl)
+import Data.Integer.Base as Int
+open Int using (ℤ; 0ℤ; 1ℤ; -1ℤ)
 import Data.Integer.Properties as IntegerProperties
 open import Euler.ResidueCharacter
 open import Euler.DirichletCertificate
@@ -30,7 +33,7 @@ table4 (suc (suc (suc (suc n)))) = 0ℤ
 -- All 16 possible pairs of residues are checked by normalization in
 -- the standard integer ring; a>=4 or b>=4 contradicts the bounds.
 product4 : (a b : ℕ) → a < 4 → b < 4
-  → table4 ((a * b) % 4) ≡ table4 a IntegerProperties.* table4 b
+  → table4 ((a * b) % 4) ≡ Int._*_ (table4 a) (table4 b)
 product4 zero zero _ _ = refl
 product4 zero (suc zero) _ _ = refl
 product4 zero (suc (suc zero)) _ _ = refl
