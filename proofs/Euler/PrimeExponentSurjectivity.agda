@@ -17,6 +17,7 @@ module Euler.PrimeExponentSurjectivity where
 open import Data.Nat.Base using (ℕ; zero; suc; _*_)
 import Data.Nat.Properties as NatProperties
 open import Data.List.Base using (List; []; _∷_)
+open import Data.Nat.ListAction using (product)
 open import Data.List.Membership.Propositional using (_∈_)
 open import Data.List.Relation.Unary.All using (All; []; _∷_)
 open import Data.List.Relation.Unary.Any using (here; there)
@@ -127,7 +128,7 @@ assignment-encodes-factor-product
   : (basis factors : List ℕ)
   → (supported : All (λ prime → prime ∈ basis) factors)
   → encode basis (assignment-from-supported-factors basis factors supported)
-    ≡ Data.Nat.ListAction.product factors
+    ≡ product factors
 assignment-encodes-factor-product basis [] [] =
   encode-zero-exponents basis
 assignment-encodes-factor-product basis (prime ∷ factors)
@@ -139,9 +140,9 @@ assignment-encodes-factor-product basis (prime ∷ factors)
           (assignment-from-supported-factors basis factors supported) ⟩
   prime * encode basis (assignment-from-supported-factors basis factors supported)
     ≡⟨ cong (prime *_) (assignment-encodes-factor-product basis factors supported) ⟩
-  prime * Data.Nat.ListAction.product factors
+  prime * product factors
     ≡⟨ refl ⟩
-  Data.Nat.ListAction.product (prime ∷ factors) ∎
+  product (prime ∷ factors) ∎
 
 -- Constructive surjectivity onto the independently characterized
 -- positive integers having a certified factorisation supported in
