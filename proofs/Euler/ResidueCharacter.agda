@@ -27,6 +27,7 @@ open import Euler.DirichletCertificate
 gcd-residue : (m tail : ℕ)
   → gcd m (suc tail) ≡ gcd (m % suc tail) (suc tail)
 gcd-residue m tail = gcd-universality
+  {m = m % suc tail} {n = suc tail} {g = gcd m (suc tail)}
   (λ (d∣remainder , d∣modulus) →
     gcd-greatest
       (∣n∣m%n⇒∣m d∣modulus d∣remainder)
