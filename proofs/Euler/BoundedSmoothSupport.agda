@@ -12,7 +12,7 @@ module Euler.BoundedSmoothSupport where
 -- and uniqueness of its bounded exponent representation. They use prime
 -- factorisation, counting and arithmetic, not complex analytic limits.
 
-open import Data.Nat.Base using (ℕ; zero; suc; _<_)
+open import Data.Nat.Base using (ℕ; zero; suc; _<_ ; _+_)
 open import Data.List.Base using (List; []; _∷_; _++_; replicate)
 open import Data.List.Relation.Unary.All using (All; []; _∷_)
 open import Data.List.Membership.Propositional using (_∈_)
@@ -75,8 +75,7 @@ count-past-other-prime head target rest exponent tail different =
         (count-repeated-other target head
            (λ same → different (sym same)) exponent))
       refl)
-  where
-    open import Data.Nat.Base using (_+_)
+ 
 
 -- Produce an equality of occurrence counts for each target different
 -- from head. The stored tail assignment is fixed while we traverse
