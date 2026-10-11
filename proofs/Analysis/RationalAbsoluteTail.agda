@@ -16,17 +16,20 @@ import Data.Rational.Properties as ℚP
 open import Relation.Binary.PropositionalEquality.Core using (sym)
 import Analysis.RationalTailBudget as Tail
 
+rational-abs : ℚ.ℚ → ℚ.ℚ
+rational-abs = ℚ.∣_∣
+
 absolute-budget-step : (weight budget : ℕ → ℚ.ℚ) → Set
 absolute-budget-step weight budget =
   (index : ℕ) →
-    ℚ.∣ weight index ℚ.∣ ℚ.+ budget (suc index)
+    rational-abs (weight index) ℚ.+ budget (suc index)
       ℚ.≤ budget index
 
 absolute-tail-plus-remainder
   : (weight budget : ℕ → ℚ.ℚ)
   → absolute-budget-step weight budget
   → (from count : ℕ)
-  → (ℚ.∣ Tail.finite-tail weight from count ℚ.∣
+  → (rational-abs (Tail.finite-tail weight from count)
        ℚ.+ budget (Tail.end-index from count))
       ℚ.≤ budget from
 absolute-tail-plus-remainder weight budget step from zero =
@@ -39,11 +42,11 @@ absolute-tail-plus-remainder weight budget step from (suc count) =
     (ℚP.≤-trans
       (ℚP.≤-reflexive
         (ℚP.+-assoc
-          (ℚ.∣ weight from ℚ.∣)
-          (ℚ.∣ Tail.finite-tail weight (suc from) count ℚ.∣)
+          (rational-abs (weight from))
+          (rational-abs (Tail.finite-tail weight (suc from) count))
           (budget (Tail.end-index (suc from) count))))
       (ℚP.≤-trans
-        (ℚP.+-monoʳ-≤ (ℚ.∣ weight from ℚ.∣)
+        (ℚP.+-monoʳ-≤ (rational-abs (weight from))
           (absolute-tail-plus-remainder weight budget step
             (suc from) count))
         (step from)))
@@ -53,15 +56,15 @@ absolute-tail-bounded
   → absolute-budget-step weight budget
   → ((index : ℕ) → ℚ.0ℚ ℚ.≤ budget index)
   → (from count : ℕ)
-  → (ℚ.∣ Tail.finite-tail weight from count ℚ.∣)
+  → (rational-abs (Tail.finite-tail weight from count))
       ℚ.≤ budget from
 absolute-tail-bounded weight budget step nonnegative from count =
   ℚP.≤-trans
     (ℚP.≤-reflexive
       (sym (ℚP.+-identityʳ
-        (ℚ.∣ Tail.finite-tail weight from count ℚ.∣))))
+        (rational-abs (Tail.finite-tail weight from count)))))
     (ℚP.≤-trans
       (ℚP.+-monoʳ-≤
-        (ℚ.∣ Tail.finite-tail weight from count ℚ.∣)
+        (rational-abs (Tail.finite-tail weight from count))
         (nonnegative (Tail.end-index from count)))
       (absolute-tail-plus-remainder weight budget step from count))
