@@ -28,7 +28,7 @@ import Data.List.Membership.Propositional.Properties as Membership
 open import Data.Product.Base using (_,_; _×_; Σ)
 open import Data.Unit.Base using (tt)
 open import Relation.Binary.PropositionalEquality.Core
-  using (_≡_; sym)
+  using (_≡_)
 import Relation.Binary.PropositionalEquality as Equality
 open import Euler.PrimeExponentInjectivity
   using (ExponentAssignment; Distinct; encode)
