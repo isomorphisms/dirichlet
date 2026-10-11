@@ -229,6 +229,27 @@ int dirichlet_characters_verify(const struct dirichlet_character *c) {
     return 1;
 }
 static double complex invalid_value(void) { return CMPLX(NAN,NAN); }
+
+/* Shape check is cheap enough at a numerical FFI boundary. A caller
+   requiring a mathematical certificate must run the separate exhaustive
+   dirichlet_characters_verify once when accepting a descriptor. */
+static int valid_for_evaluation(const struct dirichlet_character *c) {
+    if (c==NULL || dirichlet_characters_count(c->modulus)==0u ||
+        c->index>=dirichlet_characters_count(c->modulus) ||
+        c->phase_denominator==0u ||
+        c->phase_denominator>DIRICHLET_CHARACTER_MAX_MODULUS ||
+        c->phase[1u%c->modulus]!=0 ||
+        c->conductor==0u || c->modulus%c->conductor!=0u ||
+        c->value_order==0u || c->phase_denominator%c->value_order!=0u ||
+        c->parity>1u) return 0;
+    for (unsigned n=0u;n<c->modulus;++n) {
+        int unit=gcd_u(n,c->modulus)==1u;
+        int phase=c->phase[n];
+        if ((unit && (phase<0 || (unsigned)phase>=c->phase_denominator)) ||
+            (!unit && phase!=-1)) return 0;
+    }
+    return 1;
+}
 static double complex coefficient(const struct dirichlet_character *c, unsigned n) {
     int exponent=c->phase[n%c->modulus];
     if (exponent<0) return 0.0;
@@ -238,7 +259,7 @@ static double complex coefficient(const struct dirichlet_character *c, unsigned 
 double complex dirichlet_characters_value(
     const struct dirichlet_character *c, unsigned n
 ) {
-    if (!dirichlet_characters_verify(c)) return invalid_value();
+    if (!valid_for_evaluation(c)) return invalid_value();
     return coefficient(c,n);
 }
 static int is_prime(unsigned n) {
@@ -249,7 +270,7 @@ static int is_prime(unsigned n) {
 double complex dirichlet_characters_partial_sum(
     const struct dirichlet_character *c, unsigned last_n, double complex s
 ) {
-    if (last_n>MAX_SERIES || !dirichlet_characters_verify(c))
+    if (last_n>MAX_SERIES || !valid_for_evaluation(c))
         return invalid_value();
     double complex total=0.0;
     for (unsigned n=1u; n<=last_n; ++n) {
@@ -261,14 +282,14 @@ double complex dirichlet_characters_partial_sum(
 double complex dirichlet_characters_local_factor(
     const struct dirichlet_character *c, unsigned prime, double complex s
 ) {
-    if (prime>MAX_PRIME || !is_prime(prime) || !dirichlet_characters_verify(c))
+    if (prime>MAX_PRIME || !is_prime(prime) || !valid_for_evaluation(c))
         return invalid_value();
     return 1.0/(1.0-coefficient(c,prime)*cexp(-s*log((double)prime)));
 }
 double complex dirichlet_characters_finite_product(
     const struct dirichlet_character *c, unsigned last_prime, double complex s
 ) {
-    if (last_prime>MAX_PRIME || !dirichlet_characters_verify(c))
+    if (last_prime>MAX_PRIME || !valid_for_evaluation(c))
         return invalid_value();
     double complex total=1.0;
     for (unsigned p=2u;p<=last_prime;++p) {
