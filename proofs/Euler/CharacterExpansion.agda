@@ -81,8 +81,9 @@ module OverRing {c ℓ} (R : CommutativeRing c ℓ) where
       → coefficient (Nat._*_ left right)
         ≈ coefficient left * coefficient right) where
 
+    module PrimeRing = PrimeFactorWeights.OverRing R
     module Weights =
-      PrimeFactorWeights.OverRing R.ForCompletelyMultiplicative
+      PrimeRing.ForCompletelyMultiplicative
         coefficient coefficient-one coefficient-times
     open Weights using (natural-power; coefficient-of-power)
 
