@@ -158,10 +158,12 @@ using four byte-encoded color channels per component. The reader
 decodes actual GLSL numbers; screenshot colors are not treated as
 numerical evidence.
 
-A reproducible 141-case grid (tests/numeric-cases.mjs) retains all original
-81 chi4 cases and adds 60 non-default-character cases across local factors,
-finite Dirichlet sums and Euler products. It includes ±i coefficients,
-principal characters, primes including 2, and complex coordinates. A separately
+A reproducible 243-case grid (tests/numeric-cases.mjs) retains the
+81 original chi4 cases, adds 60 more cases from the six other presets,
+and adds 102 genuinely generated-character cases (17 modulus/index
+choices × 6 finite local/sum/product evaluations). It includes complex
+quartic values, principal and nonprincipal characters, powers of two,
+mixed prime powers, primes including 2, and complex coordinates. A separately
 implemented C11 evaluator must match the JavaScript evaluator to
 scaled error below 2e-11; running WebGL2 shader values must agree
 within absolute error 0.0002 + 0.0003 times the reference modulus.
@@ -235,3 +237,44 @@ No general character-group enumeration, Idriç character theorem, global
 L-function analytic continuation, device acceptance, or release is
 claimed. Keep this stacked draft unmerged pending trustworthy Flexible
 Pipes delivery and separate ai-ci acceptance.
+
+## Generated character groups and shared C11 interface (draft)
+
+See [CHARACTERS.md](CHARACTERS.md) for the unit-group decomposition,
+exact root-of-unity exponent format, conductor/primitive/parity
+semantics, bounded group enumeration, and C11 shared library ABI.
+
+The new engine enumerates **every** Dirichlet character modulo each
+q=1…128 (exactly φ(q) per modulus). It does not assume all unit groups
+are cyclic: powers of two use C₂×C_(2^(a−2)) and distinct prime powers
+compose using the Chinese remainder theorem. The fixed maximum
+modulus 128 is a versioned ABI/resource choice, not a theorem.
+
+You can use the existing [WebGL2 viewer](web/index.html) with
+**Dirichlet character → Generate χ modulo q**, then set q and its
+character index k. For example, `?model=2&character=7&modulus=5&index=1`
+selects the χ(2)=i quartic character modulo 5 in the bounded Dirichlet
+series. The displayed label includes conductor, parity, and value
+order. Finite Euler factors/products also accept the generated choice.
+
+The *actual* shader consumes a 128-slot integer phase table with
+`u_generated`, `u_generated_modulus`,
+`u_generated_denominator` and `u_generated_phases`; it forms the
+complex coefficients from the selected roots of unity. This is not a
+list of guessed function zeros or poles. `code/dirichlet_view.[ch]`
+exposes the equivalent native GLES3 uniform state and rejects invalid
+generated selectors. These components are still source candidates,
+not a device-qualified Android application.
+
+C11 shared-object build, with no C++ dependency:
+
+    cc -std=c11 -O2 -fPIC -shared code/characters.c -lm \
+       -o libdirichlet_characters.so
+
+Independent acceptance paths include the C11 and JS exact-table
+checks, numerical CPU cross-comparison, Linux `dlopen` ABI checks,
+and live WebGL2 GLSL float32 numerical readback across **243**
+bounded test cases. Even if all these succeed, they establish no
+Idriç theorem, analytic continuation or physical ARM32/PowerVR
+qualification. Flexible Pipes dispatch receipts and independent
+ai-ci acceptance are required before merge/release.
