@@ -7,7 +7,7 @@ IAS abstract confirms existence of symmetric-power lifts for regular-weight Hilb
 
 ## Expressions and links
 
-- [Lₚ(s,Symᵐf)=∏ⱼ₌₀ᵐ(1−αₚᵐ⁻ʲβₚʲp⁻ˢ)⁻¹](background/Lₚ(s,Symᵐf)=∏ⱼ₌₀ᵐ(1−αₚᵐ⁻ʲβₚʲp⁻ˢ)⁻¹) — Existing books/ias-lecture-notes.md, §7 and standard unramified Satake-parameter construction. Distinguishes symmetric-power Euler-factor degree m+1 from original modular-form weight. [Page/source](https://arxiv.org/pdf/2212.03595). **Source type:** explanatory notation, not a verified lecture equation.
+- [Lₚ(s,Symᵐf)=∏ⱼ₌₀ᵐ(1−αₚᵐ⁻ʲβₚʲp⁻ˢ)⁻¹](<background/Lₚ(s,Symᵐf)=∏ⱼ₌₀ᵐ(1−αₚᵐ⁻ʲβₚʲp⁻ˢ)⁻¹>) — Existing books/ias-lecture-notes.md, §7 and standard unramified Satake-parameter construction. Distinguishes symmetric-power Euler-factor degree m+1 from original modular-form weight. [Page/source](https://arxiv.org/pdf/2212.03595). **Source type:** explanatory notation, not a verified lecture equation.
 
 ## Reading record
 

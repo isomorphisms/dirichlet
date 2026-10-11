@@ -7,7 +7,7 @@ Use the IAS EVENT description, not the mismatched Barry Mazur abstract on the vi
 
 ## Expressions and links
 
-- [tr(T∣Sₖ)](background/tr(T∣Sₖ)) — Existing books/ias-lecture-notes.md, §5 (expository shorthand); IAS event description. Expresses the Hecke-trace subject of the talk without inventing a spectrum or trace value. [Page/source](https://www.ias.edu/events/celebration-honor-frank-c-and-florence-s-professorship-2). **Source type:** explanatory notation, not a verified lecture equation.
+- [tr(T∣Sₖ)](<background/tr(T∣Sₖ)>) — Existing books/ias-lecture-notes.md, §5 (expository shorthand); IAS event description. Expresses the Hecke-trace subject of the talk without inventing a spectrum or trace value. [Page/source](https://www.ias.edu/events/celebration-honor-frank-c-and-florence-s-professorship-2). **Source type:** explanatory notation, not a verified lecture equation.
 
 ## Reading record
 
