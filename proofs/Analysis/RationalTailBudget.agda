@@ -14,6 +14,7 @@ module Analysis.RationalTailBudget where
 -- w(n)=1/(n+1)^2 rather than assuming the convergence it needs to prove.
 
 open import Data.Nat.Base using (ℕ; zero; suc)
+open import Relation.Binary.PropositionalEquality.Core using (sym)
 import Data.Rational.Base as ℚ
 import Data.Rational.Properties as ℚP
 open ℚ using (ℚ; 0ℚ; _+_; _≤_)
@@ -46,7 +47,7 @@ finite-tail-plus-remainder weight budget step from zero =
 finite-tail-plus-remainder weight budget step from (suc count) =
   ℚP.≤-trans
     (ℚP.≤-reflexive
-      (ℚP.sym
+      (sym
         (ℚP.+-assoc (weight from)
           (finite-tail weight (suc from) count)
           (budget (end-index (suc from) count)))))
@@ -67,7 +68,7 @@ finite-tail-bounded
 finite-tail-bounded weight budget step nonnegative from count =
   ℚP.≤-trans
     (ℚP.≤-reflexive
-      (ℚP.sym (ℚP.+-identityʳ (finite-tail weight from count))))
+      (sym (ℚP.+-identityʳ (finite-tail weight from count))))
     (ℚP.≤-trans
       (ℚP.+-monoʳ-≤ (finite-tail weight from count)
          (nonnegative (end-index from count)))
