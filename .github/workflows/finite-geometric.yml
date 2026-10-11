@@ -1,4 +1,4 @@
-name: Formal finite Euler and rational tail-budget proofs
+name: Formal Euler and exact rational convergence-budget proofs
 
 on:
   push:
@@ -37,6 +37,7 @@ jobs:
           agda --safe -i proofs proofs/Euler/FiniteIntegerEnumeration.agda
           agda --safe -i proofs proofs/Euler/FiniteIntegerNoDuplicates.agda
           agda --safe -i proofs proofs/Analysis/RationalTailBudget.agda
+          agda --safe -i proofs proofs/Analysis/HalvingBudget.agda
 
   # Idriç is not marked green by this lane. Before enabling an Idriç job,
   # supply a pinned, runnable compiler and record its true target/backend.
