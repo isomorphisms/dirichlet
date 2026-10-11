@@ -1,4 +1,5 @@
 import {evaluate, characterWeight} from "./eval.mjs";
+import {runGpuDiagnostics,formatGpuReport} from "./gpu-diagnostics.mjs";
 
 const WEGERT_REVISION = "873d03e86ec2e4a9236bb2d253fee3c8fde83b6c";
 const WEGERT_COLOR_URL =
@@ -14,8 +15,11 @@ const weightPreview = byId("weight-preview"), weightKey = byId("weight-key");
 const cutoffLabel = byId("cutoff-label"), cutoffValue = byId("cutoff-value");
 const formula = byId("formula"), scope = byId("scope");
 const probe = byId("probe"), status = byId("status"), plane = byId("plane");
+const diagnosticsButton = byId("diagnostics-run");
+const diagnosticsReport = byId("diagnostics-report");
 const gl = canvas.getContext("webgl2", {antialias:false, alpha:false});
 let program = null, center = [0,0], halfHeight = 1.6, lastMode = 0;
+let visibleShaderSource = null;
 let probePoint = [1,0];
 let drawScheduled = false, gestureMoved = false;
 const pointers = new Map(), uniforms = {};
@@ -216,6 +220,51 @@ async function loadText(url) {
   if (!response.ok) throw new Error("Fetch HTTP "+response.status+" from "+url);
   return response.text();
 }
+async function readSourceCommit() {
+  try {
+    const response=await fetch(new URL("./build-receipt.json",import.meta.url),
+      {cache:"no-store"});
+    if (!response.ok) return "browser/unknown APK identity";
+    const receipt=await response.json();
+    return /^[0-9a-f]{40}$/.test(receipt.source_commit) ?
+      receipt.source_commit : "unverified-local";
+  } catch (_) { return "browser/unknown APK identity"; }
+}
+
+async function startGpuDiagnostics() {
+  if (!visibleShaderSource || !program) {
+    diagnosticsReport.textContent="FAIL: visible shader is not linked.";
+    diagnosticsReport.dataset.diagnosticsStatus="fail";
+    return;
+  }
+  diagnosticsButton.disabled=true;
+  diagnosticsReport.dataset.diagnosticsStatus="running";
+  diagnosticsReport.textContent="Reading actual WebGL2 numeric values…";
+  try {
+    const result=await runGpuDiagnostics(visibleShaderSource,(n,total)=>{
+      diagnosticsReport.textContent="GPU numerical readbacks: "+n+"/"+total;
+    });
+    const revision=await readSourceCommit();
+    diagnosticsReport.textContent=formatGpuReport(result,revision);
+    diagnosticsReport.dataset.diagnosticsStatus=result.status;
+    diagnosticsReport.dataset.diagnosticsTested=String(result.tested);
+    diagnosticsReport.dataset.diagnosticsFailed=String(result.failed);
+    console.info("DIRICHLET_NUMERIC_DIAGNOSTICS "+JSON.stringify({
+      status:result.status,tested:result.tested,failed:result.failed,
+      worstError:result.worstError,source_commit:revision,
+      renderer:result.gpu.unmaskedRenderer,glVersion:result.gpu.glVersion
+    }));
+  } catch (error) {
+    diagnosticsReport.dataset.diagnosticsStatus="fail";
+    diagnosticsReport.textContent="FAIL: "+String(error.stack||error);
+    console.error("DIRICHLET_NUMERIC_DIAGNOSTICS_FAIL "+String(error));
+  } finally {
+    diagnosticsButton.disabled=false;
+  }
+}
+
+diagnosticsButton.addEventListener("click",startGpuDiagnostics);
+
 async function initialize() {
   if (!gl) {
     status.textContent="WebGL2 unavailable; no rendering fallback selected.";
@@ -243,14 +292,24 @@ async function initialize() {
       center:"u_center",halfHeight:"u_half_height",aspect:"u_aspect",
       model:"u_model",cutoff:"u_cutoff",prime:"u_prime",character:"u_character"
     })) uniforms[key]=gl.getUniformLocation(program,name);
-    status.textContent="WebGL2 GLSL linked. Browser renderer: "+gl.getParameter(gl.RENDERER)+
+    visibleShaderSource=frag;
+    diagnosticsButton.disabled=false;
+    status.textContent="WebGL2 GLSL linked. WebGL renderer: "+gl.getParameter(gl.RENDERER)+
       "; pinned Wegert "+WEGERT_REVISION.slice(0,12)+
       ". No physical-device qualification.";
     queueDraw();
-  } catch(e) {program=null;status.textContent="No phase portrait: "+e.message;}
+    if (new URLSearchParams(location.search).get("diagnostics")==="auto")
+      void startGpuDiagnostics();
+  } catch(e) {
+    program=null;
+    visibleShaderSource=null;
+    diagnosticsButton.disabled=true;
+    status.textContent="No phase portrait: "+e.message;
+  }
 }
 if (gl) canvas.addEventListener("webglcontextlost",e=>{
-  e.preventDefault();program=null;status.textContent="WebGL2 context lost.";
+  e.preventDefault();program=null;visibleShaderSource=null;
+  diagnosticsButton.disabled=true;status.textContent="WebGL2 context lost.";
 });
 // Optional reproducible initial model/cutoff for the browser smoke and sharing.
 const initial = new URLSearchParams(location.search);
