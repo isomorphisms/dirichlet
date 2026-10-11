@@ -22,7 +22,7 @@ jobs:
         with:
           agda-version: '2.8.0'
           agda-stdlib-version: '2.3'
-      - name: Check duplicate-free finite Euler integer sum and prerequisites
+      - name: Check rational tail budgets and finite Euler arithmetic
         run: |
           agda --version
           agda --safe -i proofs proofs/Analysis/RationalTailBudget.agda
