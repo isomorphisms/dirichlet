@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - 'proof/**'
   pull_request:
   workflow_dispatch:
 
@@ -29,6 +30,7 @@ jobs:
           agda --safe -i proofs proofs/Geometric/Finite.agda
           agda --safe -i proofs proofs/Euler/FiniteExpansion.agda
           agda --safe -i proofs proofs/Euler/PrimeFactorWeights.agda
+          agda --safe -i proofs proofs/Euler/CharacterExpansion.agda
 
   # Idriç is not marked green by this lane. Before enabling an Idriç job,
   # supply a pinned, runnable compiler and record its true target/backend.
