@@ -90,7 +90,6 @@ function probeAt(z) {
 }
 function updateMathText() {
   const n=cutoff(),p=prime(),m=model();
-  const selected=currentSelection();
   const generated=useGenerated();
   const descriptor=generated ? {
     symbol:"χ("+generatedCharacter.modulus+","+generatedCharacter.index+")",
@@ -106,7 +105,7 @@ function updateMathText() {
   } else if (m===1) {
     const value=generated?generatedValue(generatedCharacter,p):characterValue(character(),p);
     formula.textContent="1/(1 − "+chi+"("+p+")·"+p+"^(−s))"+
-      "\\n"+chi+"("+p+") = "+formatComplex(value);
+      "\n"+chi+"("+p+") = "+formatComplex(value);
     scope.textContent="One meromorphic Euler factor for a character modulo "+
       descriptor.modulus+", not the global L-function.";
     plane.textContent="s-plane · one Euler factor";
