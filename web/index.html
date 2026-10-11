@@ -34,6 +34,12 @@
     #formula, #probe { white-space: pre-wrap; font-variant-numeric: tabular-nums; }
     #scope { color: #d8d8cd; }
     #status { font-size: .75rem; color: #a6bec0; margin-top: 14px; overflow-wrap: anywhere; }
+    #diagnostics-report {
+      white-space: pre-wrap; overflow-wrap: anywhere; user-select: text;
+      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+      font-size: .72rem; line-height: 1.4; color: #cbd9d9;
+    }
+    button:disabled { opacity: .55; cursor: default; }
     footer { color: #9babb0; padding: 0 18px 26px; font-size: .78rem; }
     a { color: #b8dbd8; }
     @media (max-width: 780px) {
@@ -105,6 +111,14 @@
         <span class="key">Point probe</span><p id="probe"></p>
       </section>
       <p id="status" role="status">Loading pinned Wegert color core…</p>
+      <section class="readout" aria-labelledby="diagnostics-heading">
+        <h2 id="diagnostics-heading">Device graphics diagnostics</h2>
+        <button id="diagnostics-run" type="button" disabled>Check 171 GPU values</button>
+        <p id="diagnostics-report" role="status" aria-live="polite">
+          Runs numerical GLSL readbacks on this device and compares with JavaScript.
+          The report shows the renderer, errors and source revision.
+        </p>
+      </section>
     </aside>
   </main>
   <footer>
