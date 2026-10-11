@@ -1,0 +1,13 @@
+# L(s,f⊗χ_d)=∑ₙ₌₁∞λ_f(n)χ_d(n)÷nˢ
+
+\[L(s,f\otimes\chi_d)=\sum_{n=1}^{\infty}\frac{\lambda_f(n)\chi_d(n)}{n^s}\]
+
+Quadratic twist of a normalized level-one Hecke eigenform in Xiannan Li's 2022 paper; d is a fundamental discriminant and χ_d is the primitive quadratic character of conductor |d|.
+
+## Where this expression comes from
+
+- **Xiannan Li (2022) — Quadratic Twists of Modular L-Functions**: [source notes](../books/lectures/li-xiannan/README.md); Companion paper, §1.1, printed p. 1 (PDF p. 1). [Document or source](https://arxiv.org/pdf/2208.07343#page=1). Explicit coefficient-wise quadratic twist. **Evidence:** equation in companion paper, not yet confirmed in thesis/lecture.
+
+## Filename
+
+The UTF-8 Git filename is the expression above (without a Markdown extension). The glyph **÷** in filenames denotes division, not ring quotient. Mathematical notation and hypotheses are stated in the displayed formula and provenance rather than relying solely on the filename.

@@ -1,0 +1,13 @@
+# Lₚ(s,χ)=1÷(1−χ(p)p⁻ˢ)
+
+\[L_p(s,\chi)=\left(1-\chi(p)p^{-s}\right)^{-1}\]
+
+Degree-one unramified Dirichlet Euler factor, explicitly in the existing Dirichlet IAS reading-notes comparison. An identity in a suitable convergence domain; not the analytic continuation by itself.
+
+## Where this expression comes from
+
+- **Dirichlet IAS reading notes (2026) — Classical and Dirichlet local Euler factors**: [source notes](../books/background/euler-factors/README.md); books/ias-lecture-notes.md, 'Connecting the lectures to the Dirichlet project'. [Document or source](../ias-lecture-notes.md). Degree-one unramified Euler factor of a Dirichlet character. **Evidence:** verified in source PDF or existing notes.
+
+## Filename
+
+The UTF-8 Git filename is the expression above (without a Markdown extension). The glyph **÷** in filenames denotes division, not ring quotient. Mathematical notation and hypotheses are stated in the displayed formula and provenance rather than relying solely on the filename.

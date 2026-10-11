@@ -112,3 +112,12 @@ weights introduce additional multiplier/metaplectic structure.
   L-functions before introducing a more general cusp-form representation.
 - Treat half-integral weights and p-adic varying weights as separate
   extensions, not consequences of adding an integer k field.
+
+
+## Expression-first cross-reference index
+
+- [Canonical Unicode-named functions and equations](../functions/README.md)
+- [PhD theses: source-local equation links and page notes](theses/README.md)
+- [IAS lectures: verified topics, companion-paper expressions and evidence gaps](lectures/README.md)
+
+The entries in `functions/` contain provenance in both directions. Entries marked **companion paper** or **background** are *not* claimed to have been displayed in the associated lecture or dissertation.

@@ -1,0 +1,13 @@
+# Lₚ(s,f)=1÷(1−aₚp⁻ˢ+ψ(p)pᵏ⁻¹⁻²ˢ)
+
+\[L_p(s,f)=\left(1-a_p p^{-s}+\psi(p)p^{k-1-2s}\right)^{-1}\]
+
+Degree-two local factor at p not dividing N, for a normalized classical eigen-newform of weight k, level N and nebentypus ψ in the existing IAS reading notes. This is the arithmetic-normalized form and must not be confused with Xiannan Li's unitary-normalized factor.
+
+## Where this expression comes from
+
+- **Dirichlet IAS reading notes (2026) — Classical and Dirichlet local Euler factors**: [source notes](../books/background/euler-factors/README.md); books/ias-lecture-notes.md, same section. [Document or source](../ias-lecture-notes.md). Weight/level/nebentypus dependent degree-two Euler factor, p not dividing level. **Evidence:** verified in source PDF or existing notes.
+
+## Filename
+
+The UTF-8 Git filename is the expression above (without a Markdown extension). The glyph **÷** in filenames denotes division, not ring quotient. Mathematical notation and hypotheses are stated in the displayed formula and provenance rather than relying solely on the filename.

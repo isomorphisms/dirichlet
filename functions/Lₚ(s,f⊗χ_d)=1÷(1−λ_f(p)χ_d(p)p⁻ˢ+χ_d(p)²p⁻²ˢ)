@@ -1,0 +1,13 @@
+# Lₚ(s,f⊗χ_d)=1÷(1−λ_f(p)χ_d(p)p⁻ˢ+χ_d(p)²p⁻²ˢ)
+
+\[L_p(s,f\otimes\chi_d)=\left(1-\lambda_f(p)\chi_d(p)p^{-s}+\chi_d(p)^2p^{-2s}\right)^{-1}\]
+
+Local factor in Xiannan Li's 2022 paper for the level-one eigenform normalization and its quadratic twist. At primes dividing the character conductor, χ_d(p)=0 and the factor is 1 in this formula.
+
+## Where this expression comes from
+
+- **Xiannan Li (2022) — Quadratic Twists of Modular L-Functions**: [source notes](../books/lectures/li-xiannan/README.md); Companion paper, §1.1, printed p. 1 (PDF p. 1). [Document or source](https://arxiv.org/pdf/2208.07343#page=1). Genuine Euler factor in the integral-weight setting; contrast with Dunn's half-integral-weight L-series. **Evidence:** equation in companion paper, not yet confirmed in thesis/lecture.
+
+## Filename
+
+The UTF-8 Git filename is the expression above (without a Markdown extension). The glyph **÷** in filenames denotes division, not ring quotient. Mathematical notation and hypotheses are stated in the displayed formula and provenance rather than relying solely on the filename.
