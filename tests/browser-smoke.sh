@@ -38,3 +38,17 @@ fi
 grep -o 'data-parity-points="[0-9]*"' /tmp/dirichlet-parity-dom.html
 grep -o 'data-parity-worst="[^"]*"' /tmp/dirichlet-parity-dom.html
 echo "WebGL2 shader and independent CPU evaluator agree on bounded grid"
+
+# Run the same opt-in numeric capture code shipped inside the Android APK.
+# This is a second real WebGL2 path, not merely a string or CPU-only fixture.
+diagnostic_url="http://127.0.0.1:8098/web/?model=2&character=3&diagnostics=auto"
+"$chrome" --headless=new --no-sandbox --disable-dev-shm-usage --enable-unsafe-swiftshader --use-angle=swiftshader --use-gl=angle --enable-webgl --virtual-time-budget=25000 --window-size=1280,900 --user-data-dir="/tmp/dirichlet-chrome-device-diagnostics" --dump-dom "$diagnostic_url" >"/tmp/dirichlet-device-diagnostics-dom.html" 2>"/tmp/dirichlet-device-diagnostics.log"
+if ! grep -q 'data-diagnostics-status="pass"' /tmp/dirichlet-device-diagnostics-dom.html ||
+   ! grep -q 'data-diagnostics-tested="171"' /tmp/dirichlet-device-diagnostics-dom.html ||
+   ! grep -q 'data-diagnostics-failed="0"' /tmp/dirichlet-device-diagnostics-dom.html; then
+  echo 'Shipped on-device diagnostics failed in browser: no verified 171-case GLSL readback'
+  grep -E 'diagnostics-report|data-diagnostics-' /tmp/dirichlet-device-diagnostics-dom.html | tail -n 12 || true
+  tail -n 45 /tmp/dirichlet-device-diagnostics.log || true
+  exit 1
+fi
+echo "Portable on-device diagnostic code read 171 real WebGL2 values"
