@@ -10,6 +10,8 @@ module Euler.PrimeExponentUniqueness where
 -- needs distinct prime bases and counting repeated elements.
 
 import Data.Nat.Base as Nat
+import Data.Nat.Properties as NatProperties
+open import Relation.Nullary.Decidable using (yes; no)
 open Nat using (ℕ; zero; suc)
 open import Data.Nat.ListAction using (product)
 open import Data.Nat.ListAction.Properties using (product-++)
@@ -19,6 +21,7 @@ open import Data.Nat.Primality.Factorisation
 open import Data.List.Base using (List; []; _∷_; _++_; replicate)
 open import Data.List.Relation.Unary.All using (All; []; _∷_)
 open import Data.List.Relation.Binary.Permutation.Propositional using (_↭_)
+import Data.List.Relation.Binary.Permutation.Propositional as Permutation
 open import Data.Product.Base using (_×_; _,_; proj₁)
 import Relation.Binary.PropositionalEquality as Eq
 open Eq using (_≡_)
@@ -113,3 +116,63 @@ same-number⇒same-prime-multiset left right left-prime right-prime same-number 
   factorisation-permutation same-number
     (factorisation-of-assignment left left-prime)
     (factorisation-of-assignment right right-prime)
+
+-- A multiplicity is defined in elementary natural arithmetic, with
+-- a decidable equality test. It counts each prime once per repetition,
+-- never just once per *distinct* prime.
+indicator : ℕ → ℕ → ℕ
+indicator key value with NatProperties._≟_ key value
+... | yes _ = 1
+... | no  _ = 0
+
+multiplicity : ℕ → List ℕ → ℕ
+multiplicity key [] = 0
+multiplicity key (p ∷ ps) =
+  Nat._+_ (indicator key p) (multiplicity key ps)
+
+-- Every permutation preserves the count of every fixed prime.
+-- In the swap case this follows from natural-number commutativity;
+-- no equality of the *order* of the lists is assumed.
+multiplicity-permutation
+  : (key : ℕ) → ∀ {xs ys : List ℕ}
+  → xs ↭ ys → multiplicity key xs ≡ multiplicity key ys
+multiplicity-permutation key Permutation.refl = Eq.refl
+multiplicity-permutation key (Permutation.prep p permutation) =
+  Eq.cong (Nat._+_ (indicator key p))
+    (multiplicity-permutation key permutation)
+multiplicity-permutation key
+  (Permutation.swap p q {ys = ys} permutation) =
+  Eq.trans
+    (Eq.cong
+      (λ tail-count →
+        Nat._+_ (indicator key p)
+          (Nat._+_ (indicator key q) tail-count))
+      (multiplicity-permutation key permutation))
+    (Eq.trans
+      (Eq.sym (NatProperties.+-assoc
+        (indicator key p) (indicator key q) (multiplicity key ys)))
+      (Eq.trans
+        (Eq.cong
+          (λ first-two → Nat._+_ first-two (multiplicity key ys))
+          (NatProperties.+-comm (indicator key p) (indicator key q)))
+        (NatProperties.+-assoc
+          (indicator key q) (indicator key p) (multiplicity key ys))))
+multiplicity-permutation key (Permutation.trans left right) =
+  Eq.trans (multiplicity-permutation key left)
+           (multiplicity-permutation key right)
+
+-- This exact theorem isolates the arithmetic content of unique prime
+-- exponents: whenever two certified prime-power assignments represent
+-- the same natural number, every prime occurs with the same multiplicity
+-- in their expanded lists. The distinct-base/vector corollary is next.
+same-number⇒same-prime-multiplicities
+  : (key : ℕ) (left right : List (ℕ × ℕ))
+  → All (λ pair → Prime (proj₁ pair)) left
+  → All (λ pair → Prime (proj₁ pair)) right
+  → prime-power-number left ≡ prime-power-number right
+  → multiplicity key (expanded-primes left)
+    ≡ multiplicity key (expanded-primes right)
+same-number⇒same-prime-multiplicities key left right left-prime right-prime eq =
+  multiplicity-permutation key
+    (same-number⇒same-prime-multiset
+      left right left-prime right-prime eq)
