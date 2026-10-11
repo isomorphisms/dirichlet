@@ -33,7 +33,7 @@ halving-step
 halving-step index =
   ℚP.≤-reflexive
     (trans
-      (sym (ℚP.*-distribʳ-+ ℚ.½ ℚ.½ (halving-budget index)))
+      (sym (ℚP.*-distribʳ-+ (halving-budget index) ℚ.½ ℚ.½))
       (trans
         (cong (λ ratio → ratio ℚ.* halving-budget index)
           half-plus-half)
