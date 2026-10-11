@@ -30,7 +30,7 @@ gcd-residue m tail = gcd-universality
   {m = m % suc tail} {n = suc tail} {g = gcd m (suc tail)}
   (λ (d∣remainder , d∣modulus) →
     gcd-greatest
-      (∣n∣m%n⇒∣m d∣modulus d∣remainder)
+      (∣n∣m%n⇒∣m {n = suc tail} {m = m} d∣modulus d∣remainder)
       d∣modulus)
   (λ d∣gcd →
     %-presˡ-∣
