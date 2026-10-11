@@ -12,6 +12,7 @@ module Euler.BoundedArithmeticSums where
 
 open import Algebra.Bundles using (CommutativeRing)
 open import Data.Nat.Base using (ℕ; zero; suc)
+import Data.Nat.Base as Nat
 open import Data.List.Base using (List; []; _∷_; map)
 open import Data.Product.Base using (_,_)
 open import Data.Unit.Base using (tt)
@@ -132,7 +133,7 @@ module OverRing {c ℓ} (R : CommutativeRing c ℓ) where
     (coefficient : ℕ → Carrier)
     (coefficient-one : coefficient 1 ≈ 1#)
     (coefficient-times : (left right : ℕ)
-      → coefficient (left Data.Nat.Base.* right)
+      → coefficient (Nat._*_ left right)
         ≈ coefficient left * coefficient right) where
 
     module Weights = Euler.CoefficientAssignmentWeights.OverRing R
