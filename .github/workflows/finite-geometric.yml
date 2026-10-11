@@ -33,6 +33,8 @@ jobs:
           agda --safe -i proofs proofs/Euler/CharacterExpansion.agda
           agda --safe -i proofs proofs/Euler/DirichletCertificate.agda
           agda --safe -i proofs proofs/Euler/TrivialCharacter.agda
+          agda --safe -i proofs proofs/Euler/ResidueCharacter.agda
+          agda --safe -i proofs proofs/Euler/QuadraticCharacterFour.agda
 
   # Idriç is not marked green by this lane. Before enabling an Idriç job,
   # supply a pinned, runnable compiler and record its true target/backend.
