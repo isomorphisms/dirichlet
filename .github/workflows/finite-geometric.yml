@@ -1,4 +1,4 @@
-name: Formal finite Euler product and integer enumeration
+name: Formal finite Euler product as an integer-set sum
 
 on:
   push:
@@ -22,7 +22,7 @@ jobs:
         with:
           agda-version: '2.8.0'
           agda-stdlib-version: '2.3'
-      - name: Check finite integer-list Euler reindexing and prerequisites
+      - name: Check duplicate-free finite Euler integer sum and prerequisites
         run: |
           agda --version
           agda --safe -i proofs proofs/Geometric/General.agda
@@ -35,6 +35,7 @@ jobs:
           agda --safe -i proofs proofs/Euler/BoundedArithmeticSums.agda
           agda --safe -i proofs proofs/Euler/BoundedSmoothSupport.agda
           agda --safe -i proofs proofs/Euler/FiniteIntegerEnumeration.agda
+          agda --safe -i proofs proofs/Euler/FiniteIntegerNoDuplicates.agda
 
   # Idriç is not marked green by this lane. Before enabling an Idriç job,
   # supply a pinned, runnable compiler and record its true target/backend.
