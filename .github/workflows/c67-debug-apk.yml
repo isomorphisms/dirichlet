@@ -1,0 +1,82 @@
+name: Dirichlet C67 installable test APK (not device qualification)
+
+on:
+  push:
+    branches:
+      - 'work/dirichlet-c67-apk-*'
+  pull_request:
+    paths:
+      - 'android-webview/**'
+      - 'web/**'
+      - '.github/workflows/c67-debug-apk.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout Dirichlet candidate
+        uses: actions/checkout@v4
+
+      - name: Checkout immutable public test signer
+        uses: actions/checkout@v4
+        with:
+          repository: isomorphismes/wegert
+          ref: 873d03e86ec2e4a9236bb2d253fee3c8fde83b6c
+          path: upstream-wegert
+          persist-credentials: false
+
+      - name: Verify test signing source identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C upstream-wegert rev-parse HEAD)" = 873d03e86ec2e4a9236bb2d253fee3c8fde83b6c
+          test "$(git -C upstream-wegert hash-object _/build/app/wegert-debug.keystore)" = 7dc3fd0f38608bfcfe8e6942c8b2d183557b6396
+          test "$(keytool -exportcert -keystore upstream-wegert/_/build/app/wegert-debug.keystore -storetype PKCS12 -storepass wegert-debug -alias wegert-debug 2>/dev/null | sha256sum | cut -d' ' -f1)" = de9b1d47c5a65e6d46a204b79dd9ee566b9d3c9832ba81ebc4213d3392e92ff9
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: android-actions/setup-android@v3
+
+      - name: Android platform tools
+        run: sdkmanager "platforms;android-36" "build-tools;36.0.0"
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '9.5.0'
+
+      - name: Build Java/WebView test APK for both 32- and 64-bit Android
+        run: gradle --no-daemon --console=plain -p android-webview :app:assembleDebug
+
+      - name: Check installable artifact and signer
+        shell: bash
+        run: |
+          set -euo pipefail
+          apk=android-webview/app/build/outputs/apk/debug/app-debug.apk
+          test -s "$apk"
+          unzip -l "$apk" | grep -q 'assets/web/index.html'
+          unzip -l "$apk" | grep -q 'assets/web/app.mjs'
+          unzip -l "$apk" | grep -q 'assets/web/eval.mjs'
+          unzip -l "$apk" | grep -q 'assets/web/dirichlet.frag.in'
+          "$ANDROID_HOME/build-tools/36.0.0/aapt" dump badging "$apk" | grep -q "package: name='org.isomorphisms.dirichlet.viewer'"
+          "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs "$apk" | tee apk-signing.txt
+          grep -q 'de9b1d47c5a65e6d46a204b79dd9ee566b9d3c9832ba81ebc4213d3392e92ff9' apk-signing.txt
+          sha256sum "$apk" | tee apk-sha256.txt
+
+      - name: Upload installable C67 test APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: dirichlet-c67-test-apk
+          path: |
+            android-webview/app/build/outputs/apk/debug/app-debug.apk
+            apk-sha256.txt
+            apk-signing.txt
+          if-no-files-found: error
+          retention-days: 14
