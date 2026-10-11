@@ -9,7 +9,7 @@ module Euler.QuadraticCharacterFour where
 -- Euler.ResidueCharacter lifts those finite laws to ALL natural n.
 
 open import Data.Empty using (⊥-elim)
-open import Data.Nat.Base using (ℕ; zero; suc; _<_; _*_; _%_)
+open import Data.Nat.Base using (ℕ; zero; suc; s≤s; _<_; _*_; _%_)
 open import Data.Nat.GCD using (gcd)
 open import Relation.Binary.PropositionalEquality using (_≡_; _≢_; refl)
 import Data.Integer.Base as Int
@@ -38,23 +38,23 @@ product4 zero zero _ _ = refl
 product4 zero (suc zero) _ _ = refl
 product4 zero (suc (suc zero)) _ _ = refl
 product4 zero (suc (suc (suc zero))) _ _ = refl
-product4 zero (suc (suc (suc (suc n)))) _ ()
+product4 zero (suc (suc (suc (suc n)))) _ (s≤s (s≤s (s≤s (s≤s ()))))
 product4 (suc zero) zero _ _ = refl
 product4 (suc zero) (suc zero) _ _ = refl
 product4 (suc zero) (suc (suc zero)) _ _ = refl
 product4 (suc zero) (suc (suc (suc zero))) _ _ = refl
-product4 (suc zero) (suc (suc (suc (suc n)))) _ ()
+product4 (suc zero) (suc (suc (suc (suc n)))) _ (s≤s (s≤s (s≤s (s≤s ()))))
 product4 (suc (suc zero)) zero _ _ = refl
 product4 (suc (suc zero)) (suc zero) _ _ = refl
 product4 (suc (suc zero)) (suc (suc zero)) _ _ = refl
 product4 (suc (suc zero)) (suc (suc (suc zero))) _ _ = refl
-product4 (suc (suc zero)) (suc (suc (suc (suc n)))) _ ()
+product4 (suc (suc zero)) (suc (suc (suc (suc n)))) _ (s≤s (s≤s (s≤s (s≤s ()))))
 product4 (suc (suc (suc zero))) zero _ _ = refl
 product4 (suc (suc (suc zero))) (suc zero) _ _ = refl
 product4 (suc (suc (suc zero))) (suc (suc zero)) _ _ = refl
 product4 (suc (suc (suc zero))) (suc (suc (suc zero))) _ _ = refl
-product4 (suc (suc (suc zero))) (suc (suc (suc (suc n)))) _ ()
-product4 (suc (suc (suc (suc n)))) b () _
+product4 (suc (suc (suc zero))) (suc (suc (suc (suc n)))) _ (s≤s (s≤s (s≤s (s≤s ()))))
+product4 (suc (suc (suc (suc n)))) b (s≤s (s≤s (s≤s (s≤s ())))) _
 
 -- Nonunits modulo four have residues 0 or 2. On residues 1 and 3,
 -- the standard-library gcd computes to 1, contradicting the hypothesis.
@@ -63,7 +63,7 @@ nonunit4 zero _ _ = refl
 nonunit4 (suc zero) _ not-a-unit = ⊥-elim (not-a-unit refl)
 nonunit4 (suc (suc zero)) _ _ = refl
 nonunit4 (suc (suc (suc zero))) _ not-a-unit = ⊥-elim (not-a-unit refl)
-nonunit4 (suc (suc (suc (suc n)))) () _
+nonunit4 (suc (suc (suc (suc n)))) (s≤s (s≤s (s≤s (s≤s ())))) _
 
 finite4 : FiniteResidueCharacter ring 3
 finite4 = record
