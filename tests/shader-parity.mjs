@@ -1,4 +1,5 @@
-import {evaluate} from "../web/eval.mjs";
+import {generateCharacter} from "../web/characters.mjs";
+import {evaluateSelected,shaderCharacterPayload} from "../web/character-selection.mjs";
 import {numericCases} from "./numeric-cases.mjs";
 
 const report = document.getElementById("report");
@@ -75,6 +76,10 @@ async function verify() {
     cutoff:u("u_cutoff"),
     prime:u("u_prime"),
     character:u("u_character"),
+    generated:u("u_generated"),
+    modulus:u("u_generated_modulus"),
+    denominator:u("u_generated_denominator"),
+    phases:u("u_generated_phases[0]"),
     component:u("u_capture_component")
   };
   // An offscreen RGBA8 framebuffer, not the composited browser canvas.
@@ -112,7 +117,9 @@ async function verify() {
   let worst=0;
   const perMode=[0,0,0,0];
   for (const [index,c] of numericCases.entries()) {
-    const expected=evaluate(c.mode,c.cutoff,c.prime,c.point,c.character);
+    const selection=c.modulus?generateCharacter(c.modulus,c.index):c.character;
+    const expected=evaluateSelected(c.mode,c.cutoff,c.prime,c.point,selection);
+    const payload=shaderCharacterPayload(selection);
     if (!expected.every(Number.isFinite))
       throw new Error("Invalid CPU grid point "+index);
     gl.uniform2f(uniforms.center,c.point[0],c.point[1]);
@@ -121,7 +128,11 @@ async function verify() {
     gl.uniform1i(uniforms.model,c.mode);
     gl.uniform1i(uniforms.cutoff,c.cutoff);
     gl.uniform1i(uniforms.prime,c.prime);
-    gl.uniform1i(uniforms.character,c.character);
+    gl.uniform1i(uniforms.character,payload.character);
+    gl.uniform1i(uniforms.generated,payload.generated);
+    gl.uniform1i(uniforms.modulus,payload.modulus);
+    gl.uniform1i(uniforms.denominator,payload.denominator);
+    gl.uniform1iv(uniforms.phases,payload.phases);
     const actual=[sample(0),sample(1)];
     if (!actual.every(Number.isFinite))
       throw new Error("Nonfinite GPU result "+JSON.stringify({index,c,actual}));
