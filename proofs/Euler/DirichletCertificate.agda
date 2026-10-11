@@ -43,8 +43,9 @@ module OverCertifiedCharacter {c ℓ}
   open DirichletCharacterCertificate certificate
 
   open Geometric.General.OverCommutativeRing R using (power; geometric)
+  module ExpansionRing = Expansion.OverRing R
   module Arithmetic =
-    Expansion.OverRing R.ForCompletelyMultiplicative
+    ExpansionRing.ForCompletelyMultiplicative
       value value-one value-product
   open Arithmetic public
     using (finite-local-product; arithmetic-exponent-sum;
