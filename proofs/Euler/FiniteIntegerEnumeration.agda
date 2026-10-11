@@ -28,7 +28,7 @@ import Data.List.Membership.Propositional.Properties as Membership
 open import Data.Product.Base using (_,_; _×_; Σ)
 open import Data.Unit.Base using (tt)
 open import Relation.Binary.PropositionalEquality.Core
-  using (_≡_; refl; sym)
+  using (_≡_; sym)
 import Relation.Binary.PropositionalEquality as Equality
 open import Euler.PrimeExponentInjectivity
   using (ExponentAssignment; Distinct; encode)
@@ -162,7 +162,7 @@ member-in-blocks
       map (λ other → option , other)
           (bounded-assignments rest cutoff)) options
 member-in-blocks rest cutoff exponent tail (option ∷ options)
-                 (here refl) tail-member =
+                 (here Equality.refl) tail-member =
   here (Membership.∈-map⁺ (λ other → exponent , other) tail-member)
 member-in-blocks rest cutoff exponent tail (option ∷ options)
                  (there member) tail-member =
@@ -173,7 +173,7 @@ bounded-assignment-occurs
   → (assignment : ExponentAssignment basis)
   → Bounded cutoff basis assignment
   → assignment ∈ bounded-assignments basis cutoff
-bounded-assignment-occurs [] cutoff tt tt = here refl
+bounded-assignment-occurs [] cutoff tt tt = here Equality.refl
 bounded-assignment-occurs (prime ∷ rest) cutoff
                           (exponent , tail) (exp-bound , tail-bound) =
   Membership.∈-concatMap⁺
