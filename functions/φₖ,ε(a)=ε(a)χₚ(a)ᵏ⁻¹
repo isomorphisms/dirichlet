@@ -1,0 +1,13 @@
+# φₖ,ε(a)=ε(a)χₚ(a)ᵏ⁻¹
+
+\[\varphi_{k,\varepsilon}(a)=\varepsilon(a)\chi_p(a)^{k-1}\]
+
+Character describing an arithmetic specialization of the Iwasawa algebra in Ozawa's companion paper. Weight one is special because this character is of finite order exactly when k=1, under the stated setup.
+
+## Where this expression comes from
+
+- **Tomomi Ozawa (2017) — Classical weight one Hilbert cusp forms in a Hida family and Galois representations**: [source notes](../books/theses/ozawa/README.md); Companion paper, §2.1 Weight and character, printed p. 4 (PDF p. 4). [Document or source](https://arxiv.org/pdf/1606.06554#page=4). Arithmetic specialization character and the exceptional case k=1. **Evidence:** equation in companion paper, not yet confirmed in thesis/lecture.
+
+## Filename
+
+The UTF-8 Git filename is the expression above (without a Markdown extension). The glyph **÷** in filenames denotes division, not ring quotient. Mathematical notation and hypotheses are stated in the displayed formula and provenance rather than relying solely on the filename.

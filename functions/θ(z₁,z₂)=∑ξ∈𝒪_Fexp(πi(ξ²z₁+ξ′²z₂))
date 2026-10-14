@@ -1,0 +1,13 @@
+# θ(z₁,z₂)=∑ξ∈𝒪_Fexp(πi(ξ²z₁+ξ′²z₂))
+
+\[\theta(z_1,z_2)=\sum_{\xi\in\mathcal O_F}\exp\!\big(\pi i(\xi^2z_1+(\xi')^2z_2)\big)\]
+
+Hilbert theta series over the ring of integers of a real quadratic field, with prime denoting its nontrivial real embedding. Not a one-variable classical theta function.
+
+## Where this expression comes from
+
+- **Sever Achimescu (2005) — Hilbert Modular Forms of Weight 1/2**: [source notes](../books/theses/achimescu/README.md); Chapter 2, Preliminaries, printed p. 5 (PDF p. 10). [Document or source](https://thesis.caltech.edu/1520/19/Achimescu-2005.pdf#page=10). Unweighted Hilbert theta series; two real embeddings of ξ. **Evidence:** verified in source PDF or existing notes.
+
+## Filename
+
+The UTF-8 Git filename is the expression above (without a Markdown extension). The glyph **÷** in filenames denotes division, not ring quotient. Mathematical notation and hypotheses are stated in the displayed formula and provenance rather than relying solely on the filename.

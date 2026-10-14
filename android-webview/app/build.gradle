@@ -1,0 +1,56 @@
+plugins {
+    id 'com.android.application'
+}
+
+// Copy the existing tested WebGL2 viewer verbatim. Do not fork its mathematics.
+def generatedAssets = layout.buildDirectory.dir('generated/dirichlet-assets').get().asFile
+def observedCommit = System.getenv('GITHUB_SHA') ?: ''
+def sourceCommit = (observedCommit ==~ /^[0-9a-f]{40}$/) ? observedCommit : 'unverified-local'
+tasks.register('syncDirichletWeb', Copy) {
+    from rootProject.file('../web')
+    into new File(generatedAssets, 'web')
+    include '*.html', '*.mjs', '*.in'
+    inputs.property('sourceCommit', sourceCommit)
+    doLast {
+        def receipt = new File(generatedAssets, 'web/build-receipt.json')
+        receipt.parentFile.mkdirs()
+        receipt.text = '{"source_commit":"' + sourceCommit +
+            '","version_code":2,"renderer":"WebView/WebGL2"}\n'
+    }
+}
+
+android {
+    namespace 'org.isomorphisms.dirichlet'
+    compileSdk 36
+
+    signingConfigs {
+        stableDebug {
+            // Public, explicitly non-production test signer pinned in CI.
+            storeFile rootProject.file('../upstream-wegert/_/build/app/wegert-debug.keystore')
+            storePassword 'wegert-debug'
+            keyAlias 'wegert-debug'
+            keyPassword 'wegert-debug'
+            storeType 'pkcs12'
+        }
+    }
+    defaultConfig {
+        applicationId 'org.isomorphisms.dirichlet.viewer'
+        minSdk 26
+        targetSdk 35
+        versionCode 2
+        versionName '0.2-c67-numeric-test'
+    }
+    buildTypes {
+        debug {
+            signingConfig signingConfigs.stableDebug
+        }
+    }
+    sourceSets {
+        main {
+            assets.srcDir generatedAssets
+        }
+    }
+}
+tasks.named('preBuild').configure {
+    dependsOn tasks.named('syncDirichletWeb')
+}

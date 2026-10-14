@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>Dirichlet × Wegert — phase portraits</title>
+  <style>
+    :root { color-scheme: dark; font-family: system-ui, sans-serif; background: #101419; color: #e9e8e5; }
+    * { box-sizing: border-box; } [hidden] { display: none !important; }
+    body { margin: 0; }
+    header { padding: 20px max(18px, 3vw) 14px; border-bottom: 1px solid #323b42; }
+    .eyebrow { color: #bac8cc; letter-spacing: .12em; text-transform: uppercase; font-size: .75rem; }
+    h1 { margin: 7px 0 6px; font-size: clamp(1.35rem, 3.8vw, 2.2rem); font-weight: 560; }
+    header p { margin: 0; color: #b4c0c4; font-size: .91rem; }
+    main { padding: 18px max(14px, 2vw) 26px; display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 18px; align-items: start; }
+    figure { position: relative; margin: 0; min-width: 0; border: 1px solid #49515a; border-radius: 9px; overflow: hidden; background: #171e23; }
+    canvas { display: block; width: 100%; height: min(74vh, 730px); min-height: 320px; touch-action: none; cursor: crosshair; }
+    .view-label, .view-hint { position: absolute; pointer-events: none; background: rgba(13,18,22,.77); border: 1px solid #535e65; border-radius: 5px; padding: 6px 9px; font-size: .77rem; }
+    .view-label { left: 12px; top: 12px; }
+    .view-hint { left: 12px; bottom: 12px; color: #d2d8d7; }
+    aside { border: 1px solid #3b454b; border-radius: 9px; background: #1b2329; padding: 17px; }
+    h2 { font-size: .95rem; font-weight: 650; margin: 0 0 15px; }
+    .control { display: grid; gap: 7px; margin: 0 0 16px; }
+    .control label { color: #c9d2d2; font-size: .88rem; }
+    select, button { min-height: 40px; padding: 8px 10px; color: inherit; background: #2c373f; border: 1px solid #65717a; border-radius: 5px; width: 100%; font: inherit; }
+    select:focus-visible, input:focus-visible, button:focus-visible { outline: 2px solid #ccdecf; outline-offset: 2px; }
+    button { cursor: pointer; } button:hover { background: #3a454f; }
+    input[type=range] { width: 100%; accent-color: #ced9cd; }
+    .value { color: #f1ece0; font-variant-numeric: tabular-nums; }
+    .readout { border-top: 1px solid #425057; margin-top: 16px; padding-top: 14px; }
+    .readout p { overflow-wrap: anywhere; font-size: .86rem; margin: 7px 0; line-height: 1.5; }
+    .key { font-size: .72rem; letter-spacing: .06em; text-transform: uppercase; color: #9aaeb5; }
+    #formula, #probe { white-space: pre-wrap; font-variant-numeric: tabular-nums; }
+    #scope { color: #d8d8cd; }
+    #status { font-size: .75rem; color: #a6bec0; margin-top: 14px; overflow-wrap: anywhere; }
+    #diagnostics-report {
+      white-space: pre-wrap; overflow-wrap: anywhere; user-select: text;
+      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+      font-size: .72rem; line-height: 1.4; color: #cbd9d9;
+    }
+    button:disabled { opacity: .55; cursor: default; }
+    footer { color: #9babb0; padding: 0 18px 26px; font-size: .78rem; }
+    a { color: #b8dbd8; }
+    @media (max-width: 780px) {
+      main { grid-template-columns: 1fr; padding: 12px; gap: 12px; }
+      canvas { height: min(56vh, 500px); min-height: 300px; }
+      .view-hint { font-size: .68rem; }
+      aside { padding: 14px; }
+    }
+  </style>
+  <script type="module" src="./app.mjs"></script>
+</head>
+<body>
+  <header>
+    <div class="eyebrow">Dirichlet / Wegert · finite mathematics</div>
+    <h1>Phase portraits of geometric series and Euler factors</h1>
+    <p>Wegert's phase/log-modulus color core applied to evaluated complex values.</p>
+  </header>
+  <main>
+    <figure>
+      <canvas id="portrait" aria-label="Interactive complex function phase portrait"></canvas>
+      <div class="view-label" id="plane">q-plane</div>
+      <div class="view-hint">Drag pan · pinch or scroll zoom · tap probe · double-tap reset</div>
+    </figure>
+    <aside>
+      <h2>Function and camera</h2>
+      <div class="control">
+        <label for="model">Function</label>
+        <select id="model">
+          <option value="0">Finite geometric sum G(N,q)</option>
+          <option value="1">Single character Euler factor</option>
+          <option value="2">Finite weighted Dirichlet sum</option>
+          <option value="3">Finite weighted Euler product</option>
+        </select>
+      </div>
+      <div class="control" id="character-row" hidden>
+        <label for="character">Coefficient weights χ(n)</label>
+        <select id="character">
+          <option value="4">χ₄ · modulo 4 (default)</option>
+          <option value="3">χ₃ · modulo 3</option>
+          <option value="1">χ₁ · constant 1 (zeta)</option>
+        </select>
+      </div>
+      <div class="control" id="cutoff-row">
+        <label for="cutoff"><span id="cutoff-label">Number of terms N</span>: <strong class="value" id="cutoff-value">4</strong></label>
+        <input id="cutoff" type="range" min="1" max="32" step="1" value="4">
+      </div>
+      <div class="control" id="prime-row" hidden>
+        <label for="prime">Prime p</label>
+        <select id="prime">
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="5">5</option>
+          <option value="7">7</option>
+          <option value="11">11</option>
+          <option value="13">13</option>
+          <option value="17">17</option>
+          <option value="19">19</option>
+          <option value="23">23</option>
+          <option value="29">29</option>
+          <option value="31">31</option>
+        </select>
+      </div>
+      <button id="reset" type="button">Reset camera</button>
+      <section class="readout" aria-live="polite">
+        <span class="key">Expression</span><p id="formula"></p>
+        <span class="key">Mathematical domain</span><p id="scope"></p>
+        <span class="key" id="weight-key" hidden>First 12 coefficient weights</span>
+        <p id="weight-preview" hidden></p>
+        <span class="key">Point probe</span><p id="probe"></p>
+      </section>
+      <p id="status" role="status">Loading pinned Wegert color core…</p>
+      <section class="readout" aria-labelledby="diagnostics-heading">
+        <h2 id="diagnostics-heading">Device graphics diagnostics</h2>
+        <button id="diagnostics-run" type="button" disabled>Check 171 GPU values</button>
+        <p id="diagnostics-report" role="status" aria-live="polite">
+          Runs numerical GLSL readbacks on this device and compares with JavaScript.
+          The report shows the renderer, errors and source revision.
+        </p>
+      </section>
+    </aside>
+  </main>
+  <footer>
+    Experimental WebGL2 viewer, not Android proof.
+    Color source: <a href="https://github.com/isomorphismes/wegert/blob/873d03e86ec2e4a9236bb2d253fee3c8fde83b6c/code/wegert_color.glsl">Wegert GPL-3.0-or-later GLSL</a>.
+    <a href="../README.md">Mathematical contract</a>.
+  </footer>
+</body>
+</html>

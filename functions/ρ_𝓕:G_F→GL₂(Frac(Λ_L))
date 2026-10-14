@@ -1,0 +1,13 @@
+# ρ_𝓕:G_F→GL₂(Frac(Λ_L))
+
+\[\rho_{\mathcal F}:G_F\longrightarrow\mathrm{GL}_2(\operatorname{Frac}(\Lambda_L))\]
+
+Big Galois representation associated with a primitive p-ordinary cuspidal Hida family. The family and field F are parameters; this representation is not an individual weight-one modular form.
+
+## Where this expression comes from
+
+- **Tomomi Ozawa (2017) — Classical weight one Hilbert cusp forms in a Hida family and Galois representations**: [source notes](../books/theses/ozawa/README.md); Companion paper, Introduction, printed p. 1 (PDF p. 1). [Document or source](https://arxiv.org/pdf/1606.06554#page=1). Galois representation attached to the entire Hida family. **Evidence:** equation in companion paper, not yet confirmed in thesis/lecture.
+
+## Filename
+
+The UTF-8 Git filename is the expression above (without a Markdown extension). The glyph **÷** in filenames denotes division, not ring quotient. Mathematical notation and hypotheses are stated in the displayed formula and provenance rather than relying solely on the filename.
