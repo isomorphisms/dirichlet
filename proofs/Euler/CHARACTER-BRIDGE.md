@@ -106,3 +106,54 @@ branch. No direct GitHub source write, CI pass, or issue comment counts
 as a non-bypassable Flexible Pipes dispatch/delivery receipt or
 independent ai-ci acceptance. Keep all candidates unmerged until
 that requirement is satisfied.
+
+## New Agda residue-table lifting boundary (draft PR #19)
+
+The generated finite character tables can now be treated as finite
+proof obligations, not as trusted executable output.
+
+`Euler.ResidueCharacter` defines `FiniteResidueCharacter R (q−1)` with
+only finite residue premises:
+
+1. the table at `1 % q` is the multiplicative unit of R;
+2. for *residues* `a,b<q`, the table at `ab % q` is the product of
+   the table values at a and b;
+3. at residues `a<q` not coprime to q, the table value is zero.
+
+The proof `gcd-residue` establishes
+`gcd(n % q,q)=gcd(n,q)` for **all natural n** from the standard-library
+divisibility universal property. The rest of the lifting uses the
+standard-library modulo-product/periodicity lemmas. The resulting
+`CertifiedFromTable.certified` is an actual
+`DirichletCharacterCertificate R` on **all natural numbers**, without
+an assumed extension step from machine unsigned integers.
+
+`Euler.QuadraticCharacterThree` and
+`Euler.QuadraticCharacterFour` give *constructed* certificates:
+their exact integer residue tables have respectively 9 and 16
+multiplication cases. Nonunits are proved zero and unit residues
+are checked against the gcd. The resulting χ₃ and χ₄ specialize
+the existing finite arithmetic Euler-expansion theorem. This gives
+genuinely nonprincipal character instances, rather than only the
+previous χ₁(n)=1 example.
+
+`Euler.MultiplicativeTwist` then proves that the product of a certified
+character and a second certified completely multiplicative coefficient
+is again completely multiplicative in an arbitrary commutative ring.
+This is the algebraic route to the actual Dirichlet-series coefficient
+
+    a_s(n) = χ(n) · n^(−s).
+
+Its analytic use **still requires a proof** that n↦n^(−s) takes
+positive integers into the intended complex coefficient ring and
+is completely multiplicative, followed by absolute convergence
+for Re(s)>1. A finite twisted identity is not an infinite Euler product.
+
+**Unfinished certification:** the generated χ₅± quartic tables have
+complex, not just integer, values. A root-of-unity representation needs
+a proved compatible complex/cyclotomic ring and a mechanically checked
+finite phase-addition table. Neither C11 code nor a GLSL readback
+is accepted as an Agda witness. Likewise the generated conductor and
+parity labels still require their own formal statements and proofs.
+The 128-residue cap on the C ABI is irrelevant to Agda's all-natural
+lifting theorem.

@@ -1,0 +1,13 @@
+# tr(ρₘ(Frobᵣ))=Tᵣ mod 𝔪
+
+\[\operatorname{tr}(\rho_{\mathfrak m}(\operatorname{Frob}_r))=T_r\bmod\mathfrak m\]
+
+Hecke/Frobenius trace relation in Khare's introduction, for primes r prime to pS. His accompanying determinant relation is det(ρₘ(Frobᵣ))=r modulo 𝔪. These are eigenvalue/representation constraints, not a written q-expansion.
+
+## Where this expression comes from
+
+- **Chandrashekhar B. Khare (1995) — Congruences between cusp forms**: [source notes](../books/theses/khare/README.md); Chapter 0, Introduction, printed p. 1 (PDF p. 5). [Document or source](https://thesis.caltech.edu/4046/01/Khare_cb_1995.pdf#page=5). Identifies Frobenius traces with Hecke operators at primes outside pS. **Evidence:** verified in source PDF or existing notes.
+
+## Filename
+
+The UTF-8 Git filename is the expression above (without a Markdown extension). The glyph **÷** in filenames denotes division, not ring quotient. Mathematical notation and hypotheses are stated in the displayed formula and provenance rather than relying solely on the filename.

@@ -1,0 +1,13 @@
+# α(n)=Nₑ(n)−Nₒ(n)
+
+\[\alpha(n)=N_{\mathrm e}(n)-N_{\mathrm o}(n)\]
+
+Coefficient of Ramanujan's third-order mock theta function; Nₑ and Nₒ count partitions of n with even and odd Dyson rank, respectively.
+
+## Where this expression comes from
+
+- **Alexander Dunn (2020) — Analytic and Arithmetic Applications of Half Integral Weight Automorphic Forms**: [source notes](../books/theses/dunn/README.md); Chapter 1, §1.2, immediately after equation (1.2), printed p. 2 (PDF p. 9). [Document or source](https://www.ideals.illinois.edu/items/115703/bitstreams/378457/data.pdf#page=9). Partition-rank interpretation of its coefficients. **Evidence:** verified in source PDF or existing notes.
+
+## Filename
+
+The UTF-8 Git filename is the expression above (without a Markdown extension). The glyph **÷** in filenames denotes division, not ring quotient. Mathematical notation and hypotheses are stated in the displayed formula and provenance rather than relying solely on the filename.

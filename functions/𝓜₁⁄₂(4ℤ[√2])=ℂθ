@@ -1,0 +1,13 @@
+# 𝓜₁⁄₂(4ℤ[√2])=ℂθ
+
+\[M_{1/2}(4\mathbb Z[\sqrt2])=\mathbb C\theta\]
+
+Equivalent restatement of Achimescu's explicit assertion that {θ} is a basis, for F=Q(√2). The printed thesis states the basis as a set, rather than with this exact equals sign.
+
+## Where this expression comes from
+
+- **Sever Achimescu (2005) — Hilbert Modular Forms of Weight 1/2**: [source notes](../books/theses/achimescu/README.md); Chapter 4, Examples, printed p. 26 (PDF p. 31). [Document or source](https://thesis.caltech.edu/1520/19/Achimescu-2005.pdf#page=31). Explicit one-dimensional basis over Q(√2), among six listed character/level cases; equality is an equivalent rewrite of the printed basis statement. **Evidence:** verified in source PDF or existing notes.
+
+## Filename
+
+The UTF-8 Git filename is the expression above (without a Markdown extension). The glyph **÷** in filenames denotes division, not ring quotient. Mathematical notation and hypotheses are stated in the displayed formula and provenance rather than relying solely on the filename.

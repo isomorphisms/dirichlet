@@ -1,0 +1,13 @@
+# 𝓗=Θ
+
+\[\mathcal H=\Theta\]
+
+Achimescu's main spanning equality: the space of Hilbert modular forms of weight one-half, aggregated over the levels and characters considered there, equals the span of specified weighted theta series. It is a theorem about spaces, not an equality between two scalar functions.
+
+## Where this expression comes from
+
+- **Sever Achimescu (2005) — Hilbert Modular Forms of Weight 1/2**: [source notes](../books/theses/achimescu/README.md); Abstract and Chapter 3, The main result, printed p. 11 (PDF p. 16). [Document or source](https://thesis.caltech.edu/1520/19/Achimescu-2005.pdf#page=16). All considered weight-1/2 Hilbert forms are spanned by specified theta series. **Evidence:** verified in source PDF or existing notes.
+
+## Filename
+
+The UTF-8 Git filename is the expression above (without a Markdown extension). The glyph **÷** in filenames denotes division, not ring quotient. Mathematical notation and hypotheses are stated in the displayed formula and provenance rather than relying solely on the filename.

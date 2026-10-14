@@ -1,0 +1,13 @@
+# ρₘ:G_Q→GL₂(𝕋_S mod 𝔪)
+
+\[\rho_{\mathfrak m}:\operatorname{Gal}(\overline{\mathbb Q}/\mathbb Q)\longrightarrow\mathrm{GL}_2(\mathbb T_S/\mathfrak m)\]
+
+Residual two-dimensional Galois representation attached to a maximal Hecke-algebra ideal in Khare's thesis introduction. The Unicode filename uses 'mod' for a quotient ring: the slash in the displayed formula is a quotient, not numerical division.
+
+## Where this expression comes from
+
+- **Chandrashekhar B. Khare (1995) — Congruences between cusp forms**: [source notes](../books/theses/khare/README.md); Chapter 0, Introduction, printed p. 1 (PDF p. 5). [Document or source](https://thesis.caltech.edu/4046/01/Khare_cb_1995.pdf#page=5). Galois representation built from a maximal ideal of the Hecke algebra acting on J₀(S). **Evidence:** verified in source PDF or existing notes.
+
+## Filename
+
+The UTF-8 Git filename is the expression above (without a Markdown extension). The glyph **÷** in filenames denotes division, not ring quotient. Mathematical notation and hypotheses are stated in the displayed formula and provenance rather than relying solely on the filename.

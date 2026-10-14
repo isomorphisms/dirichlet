@@ -1,0 +1,13 @@
+# y²=x³−α²x
+
+\[y^2=x^3-\alpha^2x\]
+
+The elliptic curve E_α used when Achimescu discusses the congruent-number problem over real quadratic fields. This is not itself a modular form or an L-function.
+
+## Where this expression comes from
+
+- **Sever Achimescu (2005) — Hilbert Modular Forms of Weight 1/2**: [source notes](../books/theses/achimescu/README.md); Chapter 1, Introduction, printed p. 3 (PDF p. 8). [Document or source](https://thesis.caltech.edu/1520/19/Achimescu-2005.pdf#page=8). Congruent-number problem over F and associated elliptic curve E_α; not a modular form. **Evidence:** verified in source PDF or existing notes.
+
+## Filename
+
+The UTF-8 Git filename is the expression above (without a Markdown extension). The glyph **÷** in filenames denotes division, not ring quotient. Mathematical notation and hypotheses are stated in the displayed formula and provenance rather than relying solely on the filename.

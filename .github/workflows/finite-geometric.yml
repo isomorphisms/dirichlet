@@ -1,4 +1,4 @@
-name: Finite Euler algebra proofs
+name: Formal Euler and exact rational convergence-budget proofs
 
 on:
   push:
@@ -23,9 +23,12 @@ jobs:
         with:
           agda-version: '2.8.0'
           agda-stdlib-version: '2.3'
-      - name: Check finite geometric, factor expansion, and multiplicative coefficient proofs
+      - name: Check rational tail budgets and finite Euler arithmetic
         run: |
           agda --version
+          agda --safe -i proofs proofs/Analysis/RationalTailBudget.agda
+          agda --safe -i proofs proofs/Analysis/HalvingBudget.agda
+          agda --safe -i proofs proofs/Analysis/RationalAbsoluteTail.agda
           agda --safe -i proofs proofs/Geometric/General.agda
           agda --safe -i proofs proofs/Geometric/Finite.agda
           agda --safe -i proofs proofs/Euler/FiniteExpansion.agda
@@ -33,9 +36,19 @@ jobs:
           agda --safe -i proofs proofs/Euler/CharacterExpansion.agda
           agda --safe -i proofs proofs/Euler/DirichletCertificate.agda
           agda --safe -i proofs proofs/Euler/TrivialCharacter.agda
+          agda --safe -i proofs proofs/Euler/ResidueCharacter.agda
+          agda --safe -i proofs proofs/Euler/QuadraticCharacterFour.agda
+          agda --safe -i proofs proofs/Euler/QuadraticCharacterThree.agda
+          agda --safe -i proofs proofs/Euler/MultiplicativeTwist.agda
           agda --safe -i proofs proofs/Euler/PrimeExponentUniqueness.agda
           agda --safe -i proofs proofs/Euler/DistinctPrimeExponentVectors.agda
-          agda --safe -i proofs proofs/Euler/PrimeExponentUniqueness.agda
+          agda --safe -i proofs proofs/Euler/PrimeExponentInjectivity.agda
+          agda --safe -i proofs proofs/Euler/PrimeExponentSurjectivity.agda
+          agda --safe -i proofs proofs/Euler/CoefficientAssignmentWeights.agda
+          agda --safe -i proofs proofs/Euler/BoundedArithmeticSums.agda
+          agda --safe -i proofs proofs/Euler/BoundedSmoothSupport.agda
+          agda --safe -i proofs proofs/Euler/FiniteIntegerEnumeration.agda
+          agda --safe -i proofs proofs/Euler/FiniteIntegerNoDuplicates.agda
 
   # Idriç is not marked green by this lane. Before enabling an Idriç job,
   # supply a pinned, runnable compiler and record its true target/backend.
