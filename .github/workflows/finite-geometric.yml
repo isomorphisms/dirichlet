@@ -1,4 +1,4 @@
-name: Finite Euler algebra proofs
+name: Formal Euler algebra proofs
 
 on:
   push:
@@ -22,13 +22,14 @@ jobs:
         with:
           agda-version: '2.8.0'
           agda-stdlib-version: '2.3'
-      - name: Check finite geometric, factor expansion, and multiplicative coefficient proofs
+      - name: Check geometric, Euler expansion, coefficient and prime-exponent uniqueness
         run: |
           agda --version
           agda --safe -i proofs proofs/Geometric/General.agda
           agda --safe -i proofs proofs/Geometric/Finite.agda
           agda --safe -i proofs proofs/Euler/FiniteExpansion.agda
           agda --safe -i proofs proofs/Euler/PrimeFactorWeights.agda
+          agda --safe -i proofs proofs/Euler/PrimeExponentInjectivity.agda
 
   # Idriç is not marked green by this lane. Before enabling an Idriç job,
   # supply a pinned, runnable compiler and record its true target/backend.
