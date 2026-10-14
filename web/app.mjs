@@ -1,4 +1,4 @@
-import {evaluate} from "./eval.mjs";
+import {evaluate, characterWeight} from "./eval.mjs";
 
 const WEGERT_REVISION = "873d03e86ec2e4a9236bb2d253fee3c8fde83b6c";
 const WEGERT_COLOR_URL =
@@ -9,6 +9,8 @@ const byId = id => document.getElementById(id);
 const canvas = byId("portrait"), modelInput = byId("model");
 const cutoffInput = byId("cutoff"), cutoffRow = byId("cutoff-row");
 const primeInput = byId("prime"), primeRow = byId("prime-row");
+const characterInput = byId("character"), characterRow = byId("character-row");
+const weightPreview = byId("weight-preview"), weightKey = byId("weight-key");
 const cutoffLabel = byId("cutoff-label"), cutoffValue = byId("cutoff-value");
 const formula = byId("formula"), scope = byId("scope");
 const probe = byId("probe"), status = byId("status"), plane = byId("plane");
@@ -26,6 +28,18 @@ const specs = [
 const model = () => Number(modelInput.value);
 const cutoff = () => Number(cutoffInput.value);
 const prime = () => Number(primeInput.value);
+const character = () => Number(characterInput.value);
+const characterLabel = () => ({1:"χ₁",3:"χ₃",4:"χ₄"})[character()];
+function updatePrimeLabels() {
+  weightPreview.textContent = characterLabel() + "(n), n=1…12: " +
+    Array.from({length:12},(_,i)=>characterWeight(character(),i+1))
+      .map(c=>c===1?"+1":(c===-1?"−1":"0")).join(", ");
+  for (const option of primeInput.options) {
+    const p = Number(option.value), c = characterWeight(character(),p);
+    option.textContent = p + " (" + characterLabel() + "(" + p + ") = " +
+      (c === -1 ? "−1" : (c === 1 ? "+1" : "0")) + ")";
+  }
+}
 const clamp = (x,a,b) => Math.min(b,Math.max(a,x));
 function formatNumber(x) {
   if (!Number.isFinite(x)) return String(x);
@@ -40,7 +54,7 @@ function formatComplex(z) {
 function probeAt(z) {
   probePoint = [...z];
   try {
-    const v = evaluate(model(),cutoff(),prime(),z), mag = Math.hypot(v[0],v[1]);
+    const v = evaluate(model(),cutoff(),prime(),z,character()), mag = Math.hypot(v[0],v[1]);
     const extra = Number.isFinite(mag) && mag > 0 ?
       "\narg = " + formatNumber(Math.atan2(v[1],v[0])) +
       " rad · ln|f| = " + formatNumber(Math.log(mag)) : "";
@@ -49,26 +63,30 @@ function probeAt(z) {
   } catch(e) { probe.textContent = "Probe error: " + e.message; }
 }
 function updateMathText() {
-  const n=cutoff(), p=prime(), m=model();
+  const n=cutoff(), p=prime(), m=model(), symbol=characterLabel();
   if (m===0) {
     formula.textContent="G("+n+",q) = Σ[k=0…"+(n-1)+"] q^k";
     scope.textContent="A finite polynomial. At q=1 its value is "+n+
       ", not a pole. For N=4 its zeros are −1, +i and −i.";
     plane.textContent="q-plane · finite polynomial";
   } else if (m===1) {
-    formula.textContent="1/(1 − χ₄("+p+")·"+p+"^(−s))";
-    scope.textContent="One meromorphic Euler factor, not the global L-function. "+
-      "Denominator zeros are genuine poles of this local factor.";
+    formula.textContent="1/(1 − "+symbol+"("+p+")·"+p+"^(−s))";
+    scope.textContent="One meromorphic Euler factor weighted by the selected Dirichlet character, "+
+      "not the global L-function. A zero character weight makes this factor equal 1.";
     plane.textContent="s-plane · one Euler factor";
   } else if (m===2) {
-    formula.textContent="S("+n+",s) = Σ[n=1…"+n+"] χ₄(n)n^(−s)";
-    scope.textContent="Finite and entire. As N→∞ the χ₄ series tends to L(s,χ₄) "+
+    formula.textContent="S("+n+",s) = Σ[n=1…"+n+"] "+symbol+"(n)n^(−s)";
+    scope.textContent=character()===1 ?
+      "Finite entire zeta sum. Its infinite series converges absolutely for Re(s)>1 only. "+
+      "The finite portrait is not analytic continuation." :
+      "Finite and entire. The infinite nonprincipal character series converges "+
       "for Re(s)>0, absolutely for Re(s)>1. A finite portrait is not continuation.";
     plane.textContent="s-plane · finite Dirichlet sum";
   } else {
-    formula.textContent="P("+n+",s) = ∏[prime p≤"+n+"] (1−χ₄(p)p^(−s))^(−1)";
-    scope.textContent="Finite meromorphic product; its infinite limit equals L(s,χ₄) "+
-      "for Re(s)>1. Outside this domain it is NOT continuation or an L-zero portrait.";
+    formula.textContent="P("+n+",s) = ∏[prime p≤"+n+"] (1−"+symbol+"(p)p^(−s))^(−1)";
+    scope.textContent="Finite meromorphic product; for Re(s)>1 its infinite limit "+
+      (character()===1 ? "is ζ(s)" : "is L(s,"+symbol+")")+
+      ". Outside this domain it is NOT continuation or a global L-zero portrait.";
     plane.textContent="s-plane · finite Euler product";
   }
 }
@@ -80,6 +98,9 @@ function resetCamera() {
 function chooseModel() {
   const m=model(), spec=specs[m];
   cutoffRow.hidden=m===1; primeRow.hidden=m!==1;
+  characterRow.hidden=m===0;
+  weightPreview.hidden=m===0; weightKey.hidden=m===0;
+  updatePrimeLabels();
   cutoffInput.min=String(spec.min); cutoffInput.max=String(spec.max);
   cutoffInput.value=String(spec.initial);
   cutoffLabel.textContent=spec.label; cutoffValue.textContent=String(spec.initial);
@@ -105,6 +126,7 @@ function render() {
   gl.uniform1i(uniforms.model,model());
   gl.uniform1i(uniforms.cutoff,cutoff());
   gl.uniform1i(uniforms.prime,prime());
+  gl.uniform1i(uniforms.character,character());
   gl.drawArrays(gl.TRIANGLES,0,3);
   // Opt-in proof of actual browser draw and readback (not Android evidence).
   if (new URLSearchParams(location.search).get('smoke') === '1') {
@@ -175,6 +197,9 @@ cutoffInput.addEventListener("input",()=>{
   cutoffValue.textContent=cutoffInput.value;updateMathText();probeAt(probePoint);queueDraw();
 });
 primeInput.addEventListener("change",()=>{updateMathText();probeAt(probePoint);queueDraw();});
+characterInput.addEventListener("change",()=>{
+  updatePrimeLabels();updateMathText();probeAt(probePoint);queueDraw();
+});
 byId("reset").addEventListener("click",resetCamera);
 
 function compiled(type,source) {
@@ -216,7 +241,7 @@ async function initialize() {
     gl.bindVertexArray(gl.createVertexArray());
     for (const [key,name] of Object.entries({
       center:"u_center",halfHeight:"u_half_height",aspect:"u_aspect",
-      model:"u_model",cutoff:"u_cutoff",prime:"u_prime"
+      model:"u_model",cutoff:"u_cutoff",prime:"u_prime",character:"u_character"
     })) uniforms[key]=gl.getUniformLocation(program,name);
     status.textContent="WebGL2 GLSL linked. Browser renderer: "+gl.getParameter(gl.RENDERER)+
       "; pinned Wegert "+WEGERT_REVISION.slice(0,12)+
@@ -229,6 +254,8 @@ if (gl) canvas.addEventListener("webglcontextlost",e=>{
 });
 // Optional reproducible initial model/cutoff for the browser smoke and sharing.
 const initial = new URLSearchParams(location.search);
+if (['1','3','4'].includes(initial.get('character')))
+  characterInput.value = initial.get('character');
 if (['0','1','2','3'].includes(initial.get('model')))
   modelInput.value = initial.get('model');
 chooseModel();

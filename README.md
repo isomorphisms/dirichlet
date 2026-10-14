@@ -124,10 +124,15 @@ Python 3's http.server on port 8000, then visit http://localhost:8000/web/.
 The first page load needs network access to the pinned Wegert source.
 WebGL2 is required; there is no misleading CPU substitute.
 
-Controls: finite geometric G(N,q), single chi4 Euler factor, finite chi4
-Dirichlet sum, or finite chi4 Euler product; N/P/prime selectors; drag/pan,
-pinch/scroll zoom, point probing, and camera reset. Switching among s-plane
-models preserves camera; switching q-plane to s-plane resets it.
+Controls: finite geometric G(N,q), single weighted Euler factor, bounded
+weighted Dirichlet sum, or bounded weighted Euler product. A character-weight
+selector chooses chi1(n)=1 (modulus 1, the zeta coefficients), primitive
+chi3(n) modulo 3, or primitive chi4(n) modulo 4 (the default). Every Euler
+factor uses the SAME completely multiplicative character as the global
+finite sum and finite Euler product; arbitrary coefficient lists are not
+silently assigned Euler products. The viewer shows the first twelve
+coefficient values, N/P/prime selectors, pan/pinch/scroll, probe and reset.
+Changing character retains camera; changing q-plane to s-plane resets it.
 
 The maintained scalar reference is code/dirichlet_eval.c (C11 complex),
 with a parallel JS probe evaluator in web/eval.mjs. Independent tests:
@@ -137,8 +142,10 @@ with a parallel JS probe evaluator in web/eval.mjs. Independent tests:
     node --test tests/eval.test.mjs
 
 These models are deliberately distinct. G(N,1)=N without a pole. The
-chi4 Dirichlet series converges to L(s,chi4) for Re(s)>0 (absolutely for
-Re(s)>1); the Euler product represents L(s,chi4) in Re(s)>1.
+nonprincipal chi3 and chi4 Dirichlet series converge to their L-functions
+for Re(s)>0 (absolutely for Re(s)>1). The chi1 series represents zeta
+only for Re(s)>1. For all three characters the infinite Euler product is
+justified only in Re(s)>1.
 Finite prime products outside this half-plane are not analytic continuation.
 
 **Still unqualified:** no physical MIRO A1 shader selection, CPU/GPU
@@ -158,7 +165,7 @@ using four byte-encoded color channels per component. The reader
 decodes actual GLSL numbers; screenshot colors are not treated as
 numerical evidence.
 
-A reproducible 81-case grid (tests/numeric-cases.mjs) covers all four
+A reproducible 171-case grid (tests/numeric-cases.mjs) covers all four
 models: N=0, G(4,1), roots of unity, both chi4 character signs, primes
 including 2, moving cutoffs, and complex coordinates. A separately
 implemented C11 evaluator must match the JavaScript evaluator to
@@ -188,3 +195,22 @@ preserves the camera anchor during pan/pinch without any Android or
 OpenGL dependency. See ANDROID.md for the inspected L NativeActivity
 reuse boundary, the ABI, outstanding licensing, and physical-device
 acceptance. This is not a built or qualified APK.
+
+## Coefficient-weight selection (unmerged stacked draft)
+
+The character parameter is an integer modulus `1`, `3` or `4`. For
+positive integers `n` the C11 and JS reference evaluators return values
+in `{−1,0,+1}`, and the GLSL portrait accepts the same `u_character`
+uniform as the portable C view. For a prime `p`, its local ratio is
+`q_p = chi(p) * p^(−s)`. The weight is not an arbitrary pixel multiplier.
+
+Examples at `s=2`:
+
+- `chi3(2)=−1`, hence the local factor for `p=2` equals `4/5`.
+- `chi3(3)=0`, hence the local factor for `p=3` equals `1`.
+- `chi1(2)=1`, hence the local factor for `p=2` equals `4/3`.
+
+The separate character-weight branch is stacked on the still-unmerged
+Wegert viewer PR #2. No full analytic continuation, arbitrary weighted
+coefficient Euler product, physical Android shader execution, or verified
+Idriç theorem is asserted by the C/JS/GLSL finite calculations.

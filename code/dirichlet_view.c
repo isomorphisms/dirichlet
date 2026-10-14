@@ -27,6 +27,7 @@ void dirichlet_view_initialize(struct dirichlet_view *view) {
     view->model = DIRICHLET_GEOMETRIC;
     view->cutoff = 4u;
     view->prime = 3u;
+    view->character = 4u;
     reset_camera(view);
 }
 
@@ -65,6 +66,13 @@ static bool prime_allowed(unsigned prime) {
 bool dirichlet_view_set_prime(struct dirichlet_view *view, unsigned prime) {
     if (view == NULL || !prime_allowed(prime)) return false;
     view->prime = prime;
+    return true;
+}
+
+bool dirichlet_view_set_character(struct dirichlet_view *view, unsigned character) {
+    if (view == NULL || (character != 1u && character != 3u && character != 4u))
+        return false;
+    view->character = character;
     return true;
 }
 
@@ -125,7 +133,9 @@ bool dirichlet_view_uniforms(
     float width, float height,
     struct dirichlet_glsl_uniforms *out
 ) {
-    if (view == NULL || out == NULL || !dimensions(width,height)) return false;
+    if (view == NULL || out == NULL || !dimensions(width,height) ||
+        (view->character != 1u && view->character != 3u && view->character != 4u))
+        return false;
     float aspect = width / height;
     if (!isfinite(aspect)) return false;
     out->center[0] = view->center_x;
@@ -135,5 +145,6 @@ bool dirichlet_view_uniforms(
     out->model = (int)view->model;
     out->cutoff = (int)view->cutoff;
     out->prime = (int)view->prime;
+    out->character = (int)view->character;
     return true;
 }

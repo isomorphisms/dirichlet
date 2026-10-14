@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import {chi4, isPrime, geometric, local, partial, finiteProduct, evaluate} from "../web/eval.mjs";
+import {characterWeight, chi4, isPrime, geometric, local, partial, finiteProduct, evaluate} from "../web/eval.mjs";
 
 const near = (z, x, tolerance = 1e-10) => {
   assert.ok(Math.hypot(z[0] - x[0], z[1] - x[1]) < tolerance, [z,x].join(" | "));
@@ -38,4 +38,24 @@ test("fail closed for invalid cutoffs or local composites", () => {
   assert.throws(() => partial(128,[2,0]), RangeError);
   assert.throws(() => finiteProduct(32,[2,0]), RangeError);
   assert.throws(() => local(9,[2,0]), RangeError);
+});
+
+test("weighted series and Euler factors for primitive chi3 and modulus-1 zeta", () => {
+  assert.deepEqual([1,2,3,4,5,6,7].map(n => characterWeight(3,n)),
+    [1,-1,0,1,-1,0,1]);
+  assert.deepEqual([1,2,3,4].map(n => characterWeight(1,n)),
+    [1,1,1,1]);
+  near(local(3,[2,0],3), [1,0]); // chi3 vanishes at ramified prime
+  near(local(2,[2,0],3), [0.8,0]);
+  near(partial(2,[2,0],3), [0.75,0]);
+  near(local(2,[2,0],1), [4/3,0]);
+  near(partial(3,[2,0],1), [49/36,0]);
+  near(finiteProduct(3,[2,0],1), [1.5,0]);
+  near(evaluate(2,2,3,[2,0],3), [0.75,0]);
+  near(evaluate(2,3,3,[2,0]), partial(3,[2,0],4));
+  assert.throws(() => characterWeight(2,1), RangeError);
+  assert.throws(() => characterWeight(3,0), RangeError);
+  assert.throws(() => local(3,[2,0],2), RangeError);
+  assert.throws(() => partial(0,[2,0],2), RangeError);
+  assert.throws(() => finiteProduct(0,[2,0],2), RangeError);
 });
