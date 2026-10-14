@@ -1,0 +1,22 @@
+name: Browser Wegert shader smoke (not a physical GPU)
+on:
+  pull_request:
+  push:
+    branches:
+      - 'work/**'
+  workflow_dispatch:
+
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Render actual pinned Wegert GLSL with WebGL2 and read its pixel
+        run: bash tests/browser-smoke.sh
+      - name: Keep browser screenshot (headless Chromium, not MIRO A1)
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dirichlet-wegert-headless-browser
+          path: /tmp/dirichlet-browser-portrait-*.png
+          retention-days: 14

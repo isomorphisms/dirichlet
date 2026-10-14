@@ -1,0 +1,104 @@
+#version 300 es
+precision highp float;
+precision highp int;
+
+/*__WEGERT_COLOR_CORE__*/
+
+in vec2 v_ndc;
+out vec4 frag_color;
+
+uniform vec2 u_center;
+uniform float u_half_height;
+uniform float u_aspect;
+uniform int u_model;
+uniform int u_cutoff;
+uniform int u_prime;
+#ifdef DIRICHLET_NUMERIC_CAPTURE
+uniform int u_capture_component;
+#endif
+
+const int MAX_GEOMETRIC = 32;
+const int MAX_SERIES = 127;
+const int MAX_PRIME = 31;
+
+vec2 c_mul(vec2 a, vec2 b) {
+    return vec2(a.x*b.x - a.y*b.y, a.x*b.y + a.y*b.x);
+}
+vec2 c_inverse(vec2 a) {
+    float norm = max(dot(a,a), 1.0e-28);
+    return vec2(a.x, -a.y) / norm;
+}
+vec2 n_to_minus_s(float n, vec2 s) {
+    float logarithm = log(n);
+    float radius = exp(clamp(-s.x * logarithm, -80.0, 80.0));
+    float angle = -s.y * logarithm;
+    return radius * vec2(cos(angle), sin(angle));
+}
+int chi4(int n) {
+    if (n % 2 == 0) return 0;
+    return n % 4 == 1 ? 1 : -1;
+}
+bool is_prime(int n) {
+    if (n < 2) return false;
+    for (int k = 2; k <= MAX_PRIME; k++) {
+        if (k * k > n) break;
+        if (n % k == 0) return false;
+    }
+    return true;
+}
+vec2 geometric(int n, vec2 q) {
+    vec2 sum = vec2(0.0);
+    vec2 power = vec2(1.0, 0.0);
+    for (int k = 0; k < MAX_GEOMETRIC; k++) {
+        if (k >= n) break;
+        sum += power;
+        power = c_mul(power, q);
+    }
+    // Correct at q=1; do NOT use the quotient with a fake pole there.
+    return sum;
+}
+vec2 euler_local(int p, vec2 s) {
+    float c = float(chi4(p));
+    return c_inverse(vec2(1.0,0.0) - c*n_to_minus_s(float(p),s));
+}
+vec2 chi4_partial(int cutoff, vec2 s) {
+    vec2 sum = vec2(0.0);
+    for (int n = 1; n <= MAX_SERIES; n++) {
+        if (n > cutoff) break;
+        int c = chi4(n);
+        if (c != 0) sum += float(c)*n_to_minus_s(float(n),s);
+    }
+    return sum;
+}
+vec2 chi4_product(int cutoff, vec2 s) {
+    vec2 value = vec2(1.0,0.0);
+    for (int p = 2; p <= MAX_PRIME; p++) {
+        if (p > cutoff) break;
+        if (is_prime(p)) value = c_mul(value, euler_local(p,s));
+    }
+    return value;
+}
+void main() {
+    vec2 z = u_center + vec2(
+        v_ndc.x * u_half_height * u_aspect,
+        v_ndc.y * u_half_height
+    );
+    vec2 value = vec2(0.0);
+    if (u_model == 0) value = geometric(u_cutoff, z);
+    else if (u_model == 1) value = euler_local(u_prime, z);
+    else if (u_model == 2) value = chi4_partial(u_cutoff, z);
+    else value = chi4_product(u_cutoff, z);
+#ifdef DIRICHLET_NUMERIC_CAPTURE
+    // Read this exact evaluator as float32 bytes from a 1x1 RGBA8 FBO.
+    // Two passes select real and imaginary components.
+    float component = u_capture_component == 0 ? value.x : value.y;
+    uint bits = floatBitsToUint(component);
+    uvec4 octets = uvec4(
+        bits & 255u, (bits >> 8u) & 255u,
+        (bits >> 16u) & 255u, (bits >> 24u) & 255u
+    );
+    frag_color = vec4(octets) / 255.0;
+#else
+    frag_color = vec4(wegert_color_complex(value), 1.0);
+#endif
+}

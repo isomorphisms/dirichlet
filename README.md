@@ -110,3 +110,81 @@ Do not silently copy Wegert's GPL-3.0-or-later color code into this initially un
 4. chi4(3)=-1; chi4(2)=0; local(3,2)=9/10.
 5. Reject misuse of Euler products as critical-strip approximations.
 6. Any claimed GPU acceptance must capture the selected, running shader and device renderer, not merely a plausible rendering or passing generated tests.
+
+## Interactive Wegert controls (draft)
+
+The unmerged [WebGL2 viewer](web/index.html) evaluates **finite mathematics** and passes
+the resulting complex number to Wegert's actual GPL-3.0-or-later phase/log-modulus
+color core. The viewer fetches the source at runtime from
+[Wegert revision 873d03e](https://github.com/isomorphismes/wegert/blob/873d03e86ec2e4a9236bb2d253fee3c8fde83b6c/code/wegert_color.glsl).
+No copy of Wegert GLSL is embedded in this unlicensed repository.
+
+To run: serve the repository root with a local HTTP server such as
+Python 3's http.server on port 8000, then visit http://localhost:8000/web/.
+The first page load needs network access to the pinned Wegert source.
+WebGL2 is required; there is no misleading CPU substitute.
+
+Controls: finite geometric G(N,q), single chi4 Euler factor, finite chi4
+Dirichlet sum, or finite chi4 Euler product; N/P/prime selectors; drag/pan,
+pinch/scroll zoom, point probing, and camera reset. Switching among s-plane
+models preserves camera; switching q-plane to s-plane resets it.
+
+The maintained scalar reference is code/dirichlet_eval.c (C11 complex),
+with a parallel JS probe evaluator in web/eval.mjs. Independent tests:
+
+    cc -std=c11 -Wall -Wextra -Werror -pedantic code/dirichlet_eval.c tests/dirichlet_host.c -lm -o /tmp/dirichlet-host
+    /tmp/dirichlet-host
+    node --test tests/eval.test.mjs
+
+These models are deliberately distinct. G(N,1)=N without a pole. The
+chi4 Dirichlet series converges to L(s,chi4) for Re(s)>0 (absolutely for
+Re(s)>1); the Euler product represents L(s,chi4) in Re(s)>1.
+Finite prime products outside this half-plane are not analytic continuation.
+
+**Still unqualified:** no physical MIRO A1 shader selection, CPU/GPU
+grid agreement, APK, ICK build, verified proof, or independent ai-ci
+acceptance. The direct loading of GPL Wegert code is explicit; any
+combined offline or bundled distribution needs licensing resolved.
+Flexible Pipes #72 is a tracking issue, not a dispatched job receipt.
+Do not merge/release until the actual work-control gate accepts it.
+
+
+## Numerical C11 / JavaScript / WebGL2 parity
+
+The viewer has an opt-in numerical-capture variant of the **same**
+fragment shader. It carries the raw IEEE-754 float32 real and imaginary
+results through two WebGL2 draws into an offscreen 1x1 RGBA8 buffer
+using four byte-encoded color channels per component. The reader
+decodes actual GLSL numbers; screenshot colors are not treated as
+numerical evidence.
+
+A reproducible 81-case grid (tests/numeric-cases.mjs) covers all four
+models: N=0, G(4,1), roots of unity, both chi4 character signs, primes
+including 2, moving cutoffs, and complex coordinates. A separately
+implemented C11 evaluator must match the JavaScript evaluator to
+scaled error below 2e-11; running WebGL2 shader values must agree
+within absolute error 0.0002 + 0.0003 times the reference modulus.
+
+The shader test accepts only moderate, finite, nonsingular test points.
+No bound is claimed near local-factor poles, for huge complex
+magnitudes, or beyond the bounded truncation ranges. Do not replace a
+failed shader with CPU-generated colors. The browser test uses
+software/SwiftShader and does **not** certify physical PowerVR or
+native Android GLES selection.
+
+To run independently, compile code/dirichlet_eval.c with
+tests/numeric-grid-cli.c using C11 and -lm, then pass that binary to
+node tests/cpu-grid.mjs. For real shader execution run
+bash tests/browser-smoke.sh; it also records four normal browser
+portraits. This remains separate from proof checking and full L-function
+analytic continuation.
+
+## Native-control integration seam
+
+The portable C11 camera/control state in code/dirichlet_view.c and
+code/dirichlet_view.h supplies the same six GLSL uniforms used by the
+WebGL2 viewer. It validates bounded mode/cutoff/prime transitions and
+preserves the camera anchor during pan/pinch without any Android or
+OpenGL dependency. See ANDROID.md for the inspected L NativeActivity
+reuse boundary, the ABI, outstanding licensing, and physical-device
+acceptance. This is not a built or qualified APK.
