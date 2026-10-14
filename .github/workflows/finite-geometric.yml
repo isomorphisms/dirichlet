@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - 'proof/**'
   pull_request:
   workflow_dispatch:
 
@@ -32,6 +33,9 @@ jobs:
           agda --safe -i proofs proofs/Geometric/Finite.agda
           agda --safe -i proofs proofs/Euler/FiniteExpansion.agda
           agda --safe -i proofs proofs/Euler/PrimeFactorWeights.agda
+          agda --safe -i proofs proofs/Euler/CharacterExpansion.agda
+          agda --safe -i proofs proofs/Euler/DirichletCertificate.agda
+          agda --safe -i proofs proofs/Euler/TrivialCharacter.agda
           agda --safe -i proofs proofs/Euler/PrimeExponentInjectivity.agda
           agda --safe -i proofs proofs/Euler/PrimeExponentSurjectivity.agda
           agda --safe -i proofs proofs/Euler/CoefficientAssignmentWeights.agda
