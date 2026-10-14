@@ -2,7 +2,7 @@
 // of WebGL, and the original seven-character reference remains compatible.
 import {evaluate} from "./eval.mjs";
 import {
-  MAX_MODULUS, generateCharacter,
+  MAX_MODULUS, generateCharacter, verifyCharacter,
   finiteCharacterSum, finiteCharacterLocal, finiteCharacterProduct
 } from "./characters.mjs";
 
@@ -32,9 +32,7 @@ export function shaderCharacterPayload(selection) {
       throw new RangeError("catalogue character");
     return {generated:0,character:selection,modulus:1,denominator:1,phases};
   }
-  if (!selection || !Array.isArray(selection.phases) ||
-      selection.modulus<1 || selection.modulus>MAX_MODULUS ||
-      selection.phases.length!==selection.modulus)
+  if (!verifyCharacter(selection))
     throw new RangeError("generated character");
   phases.set(selection.phases);
   return {

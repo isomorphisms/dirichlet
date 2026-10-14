@@ -155,15 +155,26 @@ export function enumerateCharacters(modulus) {
 export function verifyCharacter(c) {
   if (!c || !Number.isInteger(c.modulus) || !Array.isArray(c.phases) ||
       c.phases.length!==c.modulus || c.modulus<1 ||
-      c.modulus>MAX_MODULUS || characterCount(c.modulus)<=c.index ||
+      c.modulus>MAX_MODULUS || !Number.isInteger(c.index) || c.index<0 ||
+      characterCount(c.modulus)<=c.index ||
       !Number.isInteger(c.phaseDenominator) || c.phaseDenominator<1 ||
-      c.phaseDenominator>MAX_MODULUS || c.parity!==0 && c.parity!==1)
+      c.phaseDenominator>MAX_MODULUS ||
+      !Number.isInteger(c.valueOrder) || c.valueOrder<1 ||
+      c.phaseDenominator%c.valueOrder!==0 ||
+      !Number.isInteger(c.conductor) || c.conductor<1 ||
+      c.modulus%c.conductor!==0 || typeof c.primitive!=="boolean" ||
+      c.parity!==0 && c.parity!==1)
     return false;
   const q=c.modulus, d=c.phaseDenominator;
   if (c.phases[1%q]!==0) return false;
+  // Reject malformed entries before pair arithmetic (including coercions).
   for (let a=0;a<q;a++) {
     const exp=c.phases[a], unit=gcd(a,q)===1;
-    if (!unit && exp!==-1 || unit && !(exp>=0 && exp<d)) return false;
+    if (!Number.isInteger(exp) ||
+        !unit && exp!==-1 || unit && !(exp>=0 && exp<d)) return false;
+  }
+  for (let a=0;a<q;a++) {
+    const exp=c.phases[a], unit=gcd(a,q)===1;
     for (let b=0;b<q;b++) {
       const next=c.phases[a*b%q];
       if (unit && gcd(b,q)===1) {

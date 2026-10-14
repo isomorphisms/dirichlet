@@ -24,7 +24,7 @@ jobs:
             -o /tmp/dirichlet-characters-host
           /tmp/dirichlet-characters-host
       - name: Check independent CRT construction and orthogonality (JavaScript)
-        run: node --test tests/characters.test.mjs
+        run: node --test tests/characters.test.mjs tests/character-selection.test.mjs
       - name: Compare independent C11/JavaScript generated character values and finite sums/products
         run: |
           cc -std=c11 -O2 -Wall -Wextra -Werror -pedantic \
