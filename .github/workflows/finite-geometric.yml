@@ -36,6 +36,10 @@ jobs:
           agda --safe -i proofs proofs/Euler/CharacterExpansion.agda
           agda --safe -i proofs proofs/Euler/DirichletCertificate.agda
           agda --safe -i proofs proofs/Euler/TrivialCharacter.agda
+          agda --safe -i proofs proofs/Euler/ResidueCharacter.agda
+          agda --safe -i proofs proofs/Euler/QuadraticCharacterFour.agda
+          agda --safe -i proofs proofs/Euler/QuadraticCharacterThree.agda
+          agda --safe -i proofs proofs/Euler/MultiplicativeTwist.agda
           agda --safe -i proofs proofs/Euler/PrimeExponentInjectivity.agda
           agda --safe -i proofs proofs/Euler/PrimeExponentSurjectivity.agda
           agda --safe -i proofs proofs/Euler/CoefficientAssignmentWeights.agda
