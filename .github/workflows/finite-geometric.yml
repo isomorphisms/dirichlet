@@ -1,0 +1,32 @@
+name: Finite geometric proof
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  agda:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout exact revision
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: Install Agda and pinned compatible standard library
+        uses: agda/agda-setup-action@c931d59d76a036d1bed9f322cc12cc105bda7881 # v1
+        with:
+          agda-version: '2.8.0'
+          agda-stdlib-version: '2.3'
+      - name: Check both finite identity proofs, integer and arbitrary ring
+        run: |
+          agda --version
+          agda --safe -i proofs proofs/Geometric/General.agda
+          agda --safe -i proofs proofs/Geometric/Finite.agda
+
+  # Idriç is not marked green by this lane. Before enabling an Idriç job,
+  # supply a pinned, runnable compiler and record its true target/backend.
