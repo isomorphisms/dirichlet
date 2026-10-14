@@ -1,4 +1,4 @@
-name: Formal finite Euler and rational tail-budget proofs
+name: Formal Euler and exact rational convergence-budget proofs
 
 on:
   push:
@@ -22,10 +22,12 @@ jobs:
         with:
           agda-version: '2.8.0'
           agda-stdlib-version: '2.3'
-      - name: Check duplicate-free finite Euler integer sum and prerequisites
+      - name: Check rational tail budgets and finite Euler arithmetic
         run: |
           agda --version
           agda --safe -i proofs proofs/Analysis/RationalTailBudget.agda
+          agda --safe -i proofs proofs/Analysis/HalvingBudget.agda
+          agda --safe -i proofs proofs/Analysis/RationalAbsoluteTail.agda
           agda --safe -i proofs proofs/Geometric/General.agda
           agda --safe -i proofs proofs/Geometric/Finite.agda
           agda --safe -i proofs proofs/Euler/FiniteExpansion.agda
