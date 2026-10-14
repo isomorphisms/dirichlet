@@ -1,4 +1,4 @@
-name: Formal finite Euler product as an integer-set sum
+name: Formal finite Euler and rational tail-budget proofs
 
 on:
   push:
@@ -25,6 +25,7 @@ jobs:
       - name: Check duplicate-free finite Euler integer sum and prerequisites
         run: |
           agda --version
+          agda --safe -i proofs proofs/Analysis/RationalTailBudget.agda
           agda --safe -i proofs proofs/Geometric/General.agda
           agda --safe -i proofs proofs/Geometric/Finite.agda
           agda --safe -i proofs proofs/Euler/FiniteExpansion.agda
