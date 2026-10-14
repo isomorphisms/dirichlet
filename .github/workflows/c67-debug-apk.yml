@@ -55,6 +55,12 @@ jobs:
         with:
           gradle-version: '9.5.0'
 
+      - name: Validate diagnostic sample grid and rejection behavior
+        run: |
+          node --check web/app.mjs
+          node --check web/gpu-diagnostics.mjs
+          node --test tests/gpu-diagnostics.test.mjs
+
       - name: Build Java/WebView test APK for both 32- and 64-bit Android
         run: gradle --no-daemon --console=plain -p android-webview :app:assembleDebug
 
@@ -68,6 +74,11 @@ jobs:
           unzip -l "$apk" | grep -q 'assets/web/app.mjs'
           unzip -l "$apk" | grep -q 'assets/web/eval.mjs'
           unzip -l "$apk" | grep -q 'assets/web/dirichlet.frag.in'
+          unzip -l "$apk" | grep -q 'assets/web/gpu-diagnostics.mjs'
+          unzip -l "$apk" | grep -q 'assets/web/numeric-cases.mjs'
+          unzip -l "$apk" | grep -q 'assets/web/build-receipt.json'
+          unzip -p "$apk" assets/web/build-receipt.json | grep -Fq "$GITHUB_SHA"
+          "$ANDROID_HOME/build-tools/36.0.0/aapt" dump badging "$apk" | grep -Fq "versionCode='2'"
           "$ANDROID_HOME/build-tools/36.0.0/aapt" dump badging "$apk" | grep -q "package: name='org.isomorphisms.dirichlet.viewer'"
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs "$apk" | tee apk-signing.txt
           grep -q 'de9b1d47c5a65e6d46a204b79dd9ee566b9d3c9832ba81ebc4213d3392e92ff9' apk-signing.txt
@@ -76,7 +87,7 @@ jobs:
       - name: Upload installable C67 test APK
         uses: actions/upload-artifact@v4
         with:
-          name: dirichlet-c67-test-apk
+          name: dirichlet-c67-diagnostics-apk
           path: |
             android-webview/app/build/outputs/apk/debug/app-debug.apk
             apk-sha256.txt
