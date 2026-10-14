@@ -1,0 +1,57 @@
+module ModularCoefficients
+
+-- Closed finite arithmetic, not an infinite-series or modularity proof.
+-- Signed spelling follows the existing GeometricFinite.idric candidate.
+
+prefix : Number → List ±Number → List ±Number
+prefix Z coefficients = []
+prefix (S length) [] = []
+prefix (S length) (coefficient :: remaining) =
+  coefficient :: prefix length remaining
+
+add_coefficients : List ±Number → List ±Number → List ±Number
+add_coefficients [] second = second
+add_coefficients first [] = first
+add_coefficients (first :: remaining_first) (second :: remaining_second) =
+  (first + second) :: add_coefficients remaining_first remaining_second
+
+scale_coefficients : ±Number → List ±Number → List ±Number
+scale_coefficients factor [] = []
+scale_coefficients factor (coefficient :: remaining) =
+  (factor × coefficient) :: scale_coefficients factor remaining
+
+multiply_coefficients : List ±Number → List ±Number → List ±Number
+multiply_coefficients [] second = []
+multiply_coefficients (coefficient :: remaining) second =
+  add_coefficients (scale_coefficients coefficient second)
+    (0 :: multiply_coefficients remaining second)
+
+power_coefficients : Number → List ±Number → Number → List ±Number
+power_coefficients length coefficients Z = prefix length [1]
+power_coefficients length coefficients (S exponent) =
+  prefix length (multiply_coefficients coefficients
+    (power_coefficients length coefficients exponent))
+
+eisenstein_four : List ±Number
+eisenstein_four = [1, 240, 2160, 6720]
+
+eisenstein_six : List ±Number
+eisenstein_six = [1, 0 − 504, 0 − 16632, 0 − 122976]
+
+-- For coefficients through q³ after the leading q, factors of degree ≥3
+-- cannot contribute. Each retained factor is computed by finite convolution.
+discriminant_product_prefix : List ±Number
+discriminant_product_prefix = 0 :: prefix 3
+  (multiply_coefficients
+    (power_coefficients 3 [1, 0 − 1] 24)
+    (power_coefficients 3 [1, 0, 0 − 1] 24))
+
+discriminant_reference :
+  discriminant_product_prefix = [0, 1, 0 − 24, 252]
+discriminant_reference = Refl
+
+modular_identity_prefix :
+  add_coefficients (power_coefficients 4 eisenstein_four 3)
+    (scale_coefficients (0 − 1) (power_coefficients 4 eisenstein_six 2))
+  = scale_coefficients 1728 discriminant_product_prefix
+modular_identity_prefix = Refl

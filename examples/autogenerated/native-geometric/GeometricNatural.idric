@@ -1,0 +1,33 @@
+module GeometricNatural
+
+import Data.Nat
+
+natural_power : Number → Number → Number
+natural_power ratio Z = 1
+natural_power ratio (S exponent) = ratio × natural_power ratio exponent
+
+geometric_sum : Number → Number → Number
+geometric_sum ratio Z = 0
+geometric_sum ratio (S length) =
+  geometric_sum ratio length + natural_power ratio length
+
+one_four : geometric_sum 1 4 = 4
+one_four = Refl
+
+two_four : geometric_sum 2 4 = 15
+two_four = Refl
+
+closed_semiring_identity :
+  geometric_sum 2 4 + natural_power 2 4 = 1 + 2 × geometric_sum 2 4
+closed_semiring_identity = Refl
+
+power_of_one : (exponent : Number) → natural_power 1 exponent = 1
+power_of_one Z = Refl
+power_of_one (S exponent) = rewrite power_of_one exponent in Refl
+
+geometric_sum_of_ones : (length : Number) → geometric_sum 1 length = length
+geometric_sum_of_ones Z = Refl
+geometric_sum_of_ones (S length) =
+  rewrite power_of_one length in
+  rewrite geometric_sum_of_ones length in
+  plusCommutative length 1
