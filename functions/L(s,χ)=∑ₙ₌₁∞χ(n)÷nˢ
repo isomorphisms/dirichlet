@@ -1,0 +1,13 @@
+# L(s,χ)=∑ₙ₌₁∞χ(n)÷nˢ
+
+\[L(s,\chi)=\sum_{n=1}^{\infty}\frac{\chi(n)}{n^s}\]
+
+Dirichlet L-series for Re(s)>1 in the displayed definition. Analytic continuation is a distinct result, not a consequence of taking a finite sum.
+
+## Where this expression comes from
+
+- **Alexander Dunn (2020) — Analytic and Arithmetic Applications of Half Integral Weight Automorphic Forms**: [source notes](../books/theses/dunn/README.md); Chapter 2, §2.1, printed p. 5 (PDF p. 12). [Document or source](https://www.ideals.illinois.edu/items/115703/bitstreams/378457/data.pdf#page=12). Explicit definition of the usual Dirichlet L-series, for Re(s)>1. **Evidence:** verified in source PDF or existing notes.
+
+## Filename
+
+The UTF-8 Git filename is the expression above (without a Markdown extension). The glyph **÷** in filenames denotes division, not ring quotient. Mathematical notation and hypotheses are stated in the displayed formula and provenance rather than relying solely on the filename.

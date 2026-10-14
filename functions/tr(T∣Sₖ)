@@ -1,0 +1,13 @@
+# tr(T∣Sₖ)
+
+\[\operatorname{tr}(T\mid S_k)\]
+
+Trace of an operator acting on a finite-dimensional modular/cusp-form space. This notation is from the existing IAS reading notes as an explanation of Winnie Li's Hecke-trace topic, not a transcription of a displayed equation in the recording.
+
+## Where this expression comes from
+
+- **Wen-Ching Winnie Li (2022) — Modular Curves, Modular Forms and Hecke Operators: Old and New**: [source notes](../books/lectures/li-winnie/README.md); Existing books/ias-lecture-notes.md, §5 (expository shorthand); IAS event description. [Document or source](https://www.ias.edu/events/celebration-honor-frank-c-and-florence-s-professorship-2). Expresses the Hecke-trace subject of the talk without inventing a spectrum or trace value. **Evidence:** background notation, not a verified lecture slide.
+
+## Filename
+
+The UTF-8 Git filename is the expression above (without a Markdown extension). The glyph **÷** in filenames denotes division, not ring quotient. Mathematical notation and hypotheses are stated in the displayed formula and provenance rather than relying solely on the filename.

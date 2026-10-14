@@ -1,0 +1,13 @@
+# L(s,f)=∑ₙ₌₁∞λ_f(n)÷nˢ
+
+\[L(s,f)=\sum_{n=1}^{\infty}\frac{\lambda_f(n)}{n^s}\]
+
+Hecke-eigenvalue normalization in Xiannan Li's 2022 paper for a level-one holomorphic eigenform. In that setting it also has a degree-two Euler product, unlike Dunn's half-integral-weight L-series.
+
+## Where this expression comes from
+
+- **Xiannan Li (2022) — Quadratic Twists of Modular L-Functions**: [source notes](../books/lectures/li-xiannan/README.md); Companion paper, §1.1, printed p. 1 (PDF p. 1). [Document or source](https://arxiv.org/pdf/2208.07343#page=1). Unitary-normalized degree-two Hecke L-function underlying the twists. **Evidence:** equation in companion paper, not yet confirmed in thesis/lecture.
+
+## Filename
+
+The UTF-8 Git filename is the expression above (without a Markdown extension). The glyph **÷** in filenames denotes division, not ring quotient. Mathematical notation and hypotheses are stated in the displayed formula and provenance rather than relying solely on the filename.
