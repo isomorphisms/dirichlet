@@ -1,0 +1,14 @@
+module GeometricFalse
+
+-- Expected rejection fixture. Never include this module in a passing build.
+natural_power : Number → Number → Number
+natural_power ratio Z = 1
+natural_power ratio (S exponent) = ratio × natural_power ratio exponent
+
+geometric_sum : Number → Number → Number
+geometric_sum ratio Z = 0
+geometric_sum ratio (S length) =
+  geometric_sum ratio length + natural_power ratio length
+
+false_witness : geometric_sum 1 4 = 5
+false_witness = Refl
