@@ -1,0 +1,13 @@
+# L(s,f×f)=∑ₙ₌₁∞|a(n)|²÷nˢ
+
+\[L(s,f\times f)=\sum_{n=1}^{\infty}\frac{|a(n)|^2}{n^s}\]
+
+The Rankin–Selberg series Dunn defines for f in S_k(4). It is analyzed using an Eisenstein integral; do not assume the standard integral-weight degree-four Euler product for this half-integral-weight object.
+
+## Where this expression comes from
+
+- **Alexander Dunn (2020) — Analytic and Arithmetic Applications of Half Integral Weight Automorphic Forms**: [source notes](../books/theses/dunn/README.md); Chapter 2, §2.3.3, printed p. 24 (PDF p. 31). [Document or source](https://www.ideals.illinois.edu/items/115703/bitstreams/378457/data.pdf#page=31). Rankin–Selberg Dirichlet series used with the Eisenstein-series integral. **Evidence:** verified in source PDF or existing notes.
+
+## Filename
+
+The UTF-8 Git filename is the expression above (without a Markdown extension). The glyph **÷** in filenames denotes division, not ring quotient. Mathematical notation and hypotheses are stated in the displayed formula and provenance rather than relying solely on the filename.

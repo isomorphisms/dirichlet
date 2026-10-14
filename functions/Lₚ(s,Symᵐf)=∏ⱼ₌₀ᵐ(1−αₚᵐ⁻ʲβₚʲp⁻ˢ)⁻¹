@@ -1,0 +1,13 @@
+# Lₚ(s,Symᵐf)=∏ⱼ₌₀ᵐ(1−αₚᵐ⁻ʲβₚʲp⁻ˢ)⁻¹
+
+\[L_p(s,\operatorname{Sym}^{m}f)=\prod_{j=0}^{m}\left(1-\alpha_p^{m-j}\beta_p^j p^{-s}\right)^{-1}\]
+
+Schematic unramified local Euler factor derived from Satake parameters α_p, β_p. The familiar GL(2)/Q notation illustrates the symmetric-power subject in the IAS reading notes; the Hilbert case has local places v and norms q_v. Not claimed verbatim from Thorne's talk.
+
+## Where this expression comes from
+
+- **Jack Thorne (2023) — Symmetric Power Functoriality for Hilbert Modular Forms**: [source notes](../books/lectures/thorne/README.md); Existing books/ias-lecture-notes.md, §7 and standard unramified Satake-parameter construction. [Document or source](https://arxiv.org/pdf/2212.03595). Distinguishes symmetric-power Euler-factor degree m+1 from original modular-form weight. **Evidence:** background notation, not a verified lecture slide.
+
+## Filename
+
+The UTF-8 Git filename is the expression above (without a Markdown extension). The glyph **÷** in filenames denotes division, not ring quotient. Mathematical notation and hypotheses are stated in the displayed formula and provenance rather than relying solely on the filename.

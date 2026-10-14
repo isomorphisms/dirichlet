@@ -1,0 +1,13 @@
+# ∑𝔪 ι(c(𝔪,𝓕) mod P)÷N𝔪ˢ
+
+\[\sum_{\mathfrak m}\frac{\iota(c(\mathfrak m,\mathcal F)\bmod P)}{N\mathfrak m^{\,s}}\]
+
+Dirichlet series defining the classical Hilbert cusp-form specialization f_P of a p-ordinary Hida family in Ozawa's companion paper, Definition 2.2. N𝔪 means absolute ideal norm; this is not the level N.
+
+## Where this expression comes from
+
+- **Tomomi Ozawa (2017) — Classical weight one Hilbert cusp forms in a Hida family and Galois representations**: [source notes](../books/theses/ozawa/README.md); Companion paper, Definition 2.2, printed p. 5 (PDF p. 5). [Document or source](https://arxiv.org/pdf/1606.06554#page=5). Classical Hilbert cusp form identified from specialized Dirichlet coefficients. **Evidence:** equation in companion paper, not yet confirmed in thesis/lecture.
+
+## Filename
+
+The UTF-8 Git filename is the expression above (without a Markdown extension). The glyph **÷** in filenames denotes division, not ring quotient. Mathematical notation and hypotheses are stated in the displayed formula and provenance rather than relying solely on the filename.

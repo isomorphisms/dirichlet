@@ -1,0 +1,13 @@
+# L(s,f,χ)=∑ₙ₌₁∞a(n)χ(n)÷nˢ
+
+\[L(s,f,\chi)=\sum_{n=1}^{\infty}\frac{a(n)\chi(n)}{n^s}\]
+
+Dunn's unitary-normalized twist of a half-integral-weight form: a(n) are normalized Fourier coefficients. Although it admits analytic continuation and a functional equation in the cited setting, Dunn explicitly notes that this half-integral-weight L-series has no Euler product in general. Do not identify it with the integral-weight Euler-product case.
+
+## Where this expression comes from
+
+- **Alexander Dunn (2020) — Analytic and Arithmetic Applications of Half Integral Weight Automorphic Forms**: [source notes](../books/theses/dunn/README.md); Chapter 2, §2.1, equation (2.4), printed pp. 6–7 (PDF p. 14). [Document or source](https://www.ideals.illinois.edu/items/115703/bitstreams/378457/data.pdf#page=14). Half-integral-weight cuspidal L-series twisted by a primitive Dirichlet character; the central object of the chapter. **Evidence:** verified in source PDF or existing notes.
+
+## Filename
+
+The UTF-8 Git filename is the expression above (without a Markdown extension). The glyph **÷** in filenames denotes division, not ring quotient. Mathematical notation and hypotheses are stated in the displayed formula and provenance rather than relying solely on the filename.

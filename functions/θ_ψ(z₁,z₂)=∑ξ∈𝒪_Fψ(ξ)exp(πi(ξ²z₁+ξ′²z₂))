@@ -1,0 +1,13 @@
+# θ_ψ(z₁,z₂)=∑ξ∈𝒪_Fψ(ξ)exp(πi(ξ²z₁+ξ′²z₂))
+
+\[\theta_\psi(z_1,z_2)=\sum_{\xi\in\mathcal O_F}\psi(\xi)\exp\!\big(\pi i(\xi^2z_1+(\xi')^2z_2)\big)\]
+
+Character-weighted Hilbert theta series. The multiplicative character, field, conductor, and level must be retained; it is not identified with the unweighted theta series.
+
+## Where this expression comes from
+
+- **Sever Achimescu (2005) — Hilbert Modular Forms of Weight 1/2**: [source notes](../books/theses/achimescu/README.md); Chapter 2, Preliminaries, printed p. 9 (PDF p. 13). [Document or source](https://thesis.caltech.edu/1520/19/Achimescu-2005.pdf#page=13). Twist the theta coefficients by a character ψ. **Evidence:** verified in source PDF or existing notes.
+
+## Filename
+
+The UTF-8 Git filename is the expression above (without a Markdown extension). The glyph **÷** in filenames denotes division, not ring quotient. Mathematical notation and hypotheses are stated in the displayed formula and provenance rather than relying solely on the filename.
