@@ -1,4 +1,4 @@
-name: Finite geometric proof
+name: Finite geometric and Euler expansion proofs
 
 on:
   push:
@@ -22,11 +22,12 @@ jobs:
         with:
           agda-version: '2.8.0'
           agda-stdlib-version: '2.3'
-      - name: Check both finite identity proofs, integer and arbitrary ring
+      - name: Check finite geometric and Euler factor expansion proofs
         run: |
           agda --version
           agda --safe -i proofs proofs/Geometric/General.agda
           agda --safe -i proofs proofs/Geometric/Finite.agda
+          agda --safe -i proofs proofs/Euler/FiniteExpansion.agda
 
   # Idriç is not marked green by this lane. Before enabling an Idriç job,
   # supply a pinned, runnable compiler and record its true target/backend.
