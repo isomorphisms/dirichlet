@@ -1,4 +1,4 @@
-name: Formal Euler factorization and coefficient proofs
+name: Formal finite Euler product and coefficient proofs
 
 on:
   push:
@@ -22,7 +22,7 @@ jobs:
         with:
           agda-version: '2.8.0'
           agda-stdlib-version: '2.3'
-      - name: Check geometric and prime-exponent factorization proofs
+      - name: Check finite arithmetic Euler sums and prerequisite proofs
         run: |
           agda --version
           agda --safe -i proofs proofs/Geometric/General.agda
@@ -32,6 +32,7 @@ jobs:
           agda --safe -i proofs proofs/Euler/PrimeExponentInjectivity.agda
           agda --safe -i proofs proofs/Euler/PrimeExponentSurjectivity.agda
           agda --safe -i proofs proofs/Euler/CoefficientAssignmentWeights.agda
+          agda --safe -i proofs proofs/Euler/BoundedArithmeticSums.agda
 
   # Idriç is not marked green by this lane. Before enabling an Idriç job,
   # supply a pinned, runnable compiler and record its true target/backend.
