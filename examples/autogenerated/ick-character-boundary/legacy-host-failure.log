@@ -1,0 +1,1 @@
+dir26-legacy-host-final: tests/dirichlet_host.c:64: main: Assertion `dirichlet_character_value(DIRICHLET_CHI5_PLUS,2)==I' failed.
