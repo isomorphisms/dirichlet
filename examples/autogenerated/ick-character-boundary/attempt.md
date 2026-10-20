@@ -59,3 +59,13 @@ follows. The failed and passing logs are retained beside this account. The
 next meaningful acceptance is the unchanged complete legacy C test passing
 under the declared, qualified compiler/runtime profile, followed by rerunning
 both independent numerical grids and the actual shared-library boundary.
+
+The proper native profile is now accepted through ICK PR 81 at source
+b52d9acce9c71cd8e84494ffa28c03a973a39011. Its hosted compiler/runtime build
+and 21 executions passed. The retained 659662653-byte compiler archive exceeds
+the connector's 512 MiB download limit; no local replay is inferred from that
+success. The existing host-fixtures workflow now source-builds and qualifies
+that exact native profile before running the unchanged complete legacy test,
+viewport fixtures and independent 243-sample numerical grid. Its checkout is
+bound to the actual PR head. This is a pending actual consumer observation,
+not a claim that changing the profile fixes the exact-equality failure.
