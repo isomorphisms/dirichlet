@@ -256,6 +256,14 @@ static double complex coefficient(const struct dirichlet_character *c, unsigned 
     double angle=(2.0*acos(-1.0)*(double)exponent)/(double)c->phase_denominator;
     return CMPLX(cos(angle),sin(angle));
 }
+/* Foreign libm complex calls use a Cartesian ABI. Keep ICK's complex storage
+   inside this translation unit and cross that boundary through scalar calls. */
+static double complex n_to_minus_s(unsigned n, double complex s) {
+    double logarithm=log((double)n);
+    double magnitude=exp(-creal(s)*logarithm);
+    double angle=-cimag(s)*logarithm;
+    return CMPLX(magnitude*cos(angle),magnitude*sin(angle));
+}
 double complex dirichlet_characters_value(
     const struct dirichlet_character *c, unsigned n
 ) {
@@ -275,7 +283,7 @@ double complex dirichlet_characters_partial_sum(
     double complex total=0.0;
     for (unsigned n=1u; n<=last_n; ++n) {
         if (c->phase[n%c->modulus]<0) continue;
-        total+=coefficient(c,n)*cexp(-s*log((double)n));
+        total+=coefficient(c,n)*n_to_minus_s(n,s);
     }
     return total;
 }
@@ -284,7 +292,7 @@ double complex dirichlet_characters_local_factor(
 ) {
     if (prime>MAX_PRIME || !is_prime(prime) || !valid_for_evaluation(c))
         return invalid_value();
-    return 1.0/(1.0-coefficient(c,prime)*cexp(-s*log((double)prime)));
+    return 1.0/(1.0-coefficient(c,prime)*n_to_minus_s(prime,s));
 }
 double complex dirichlet_characters_finite_product(
     const struct dirichlet_character *c, unsigned last_prime, double complex s
@@ -294,7 +302,7 @@ double complex dirichlet_characters_finite_product(
     double complex total=1.0;
     for (unsigned p=2u;p<=last_prime;++p) {
         if (!is_prime(p)) continue;
-        total*=1.0/(1.0-coefficient(c,p)*cexp(-s*log((double)p)));
+        total*=1.0/(1.0-coefficient(c,p)*n_to_minus_s(p,s));
     }
     return total;
 }

@@ -23,6 +23,15 @@ static double complex invalid_value(void) {
     return CMPLX(NAN, NAN);
 }
 
+/* Use scalar libm at the foreign ABI boundary; construct the mathematical
+   complex value with the actual compiler's representation inside this unit. */
+static double complex n_to_minus_s(unsigned n, double complex s) {
+    double logarithm = log((double)n);
+    double magnitude = exp(-creal(s) * logarithm);
+    double angle = -cimag(s) * logarithm;
+    return CMPLX(magnitude * cos(angle), magnitude * sin(angle));
+}
+
 unsigned dirichlet_character_modulus(unsigned character) {
     return character < DIRICHLET_CHARACTER_COUNT
         ? characters[character].modulus : 0u;
@@ -47,15 +56,22 @@ static unsigned gcd_unsigned(unsigned a, unsigned b) {
 int dirichlet_character_table_valid(unsigned character) {
     unsigned modulus = dirichlet_character_modulus(character);
     if (modulus == 0u) return 0;
-    if (dirichlet_character_value(character, 1u) != 1.0) return 0;
+    const struct character_definition *entry = &characters[character];
+    if (entry->real[1u % modulus] != 1 || entry->imag[1u % modulus] != 0)
+        return 0;
     for (unsigned a = 0u; a < modulus; ++a) {
-        double complex value = dirichlet_character_value(character, a);
+        int real = entry->real[a], imag = entry->imag[a];
         int is_unit = gcd_unsigned(a, modulus) == 1u;
-        double norm_squared = creal(value)*creal(value) + cimag(value)*cimag(value);
-        if (norm_squared != (is_unit ? 1.0 : 0.0)) return 0;
+        if (real < -1 || real > 1 || imag < -1 || imag > 1) return 0;
+        int norm_squared = real*real + imag*imag;
+        if (norm_squared != (is_unit ? 1 : 0)) return 0;
         for (unsigned b = 0u; b < modulus; ++b) {
-            double complex product = value * dirichlet_character_value(character,b);
-            if (dirichlet_character_value(character,(a*b)%modulus) != product)
+            /* The catalogue's Gaussian-integer laws are exact integer laws,
+               not equality of rounded floating complex products. */
+            int other_real = entry->real[b], other_imag = entry->imag[b];
+            unsigned product_residue = (a*b) % modulus;
+            if (entry->real[product_residue] != real*other_real - imag*other_imag ||
+                entry->imag[product_residue] != real*other_imag + imag*other_real)
                 return 0;
         }
     }
@@ -93,7 +109,7 @@ double complex dirichlet_character_partial_sum(
     for (unsigned n = 1u; n <= last_n; ++n) {
         double complex coefficient = dirichlet_character_value(character,n);
         if (coefficient != 0.0)
-            total += coefficient * cexp(-s * log((double)n));
+            total += coefficient * n_to_minus_s(n, s);
     }
     return total;
 }
@@ -105,7 +121,7 @@ double complex dirichlet_character_local_factor(
         prime > DIRICHLET_MAX_PRIME || !dirichlet_is_prime(prime))
         return invalid_value();
     double complex coefficient = dirichlet_character_value(character,prime);
-    return 1.0 / (1.0 - coefficient * cexp(-s * log((double)prime)));
+    return 1.0 / (1.0 - coefficient * n_to_minus_s(prime, s));
 }
 
 double complex dirichlet_character_finite_euler_product(

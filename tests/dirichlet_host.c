@@ -29,9 +29,14 @@ int main(void) {
 
     double complex q = 0.25 + 0.40*I;
     double complex g = dirichlet_geometric(9, q);
-    /* Finite ring identity, independent of division, including the q=1 case. */
-    assert(near((1.0-q)*g, 1.0-cpow(q,9), 1e-12));
-    assert(near((1.0-1.0)*dirichlet_geometric(9,1), 1.0-cpow(1.0,9), 1e-14));
+    /* Independent polar closed form versus the producer's finite ring sum.
+       Scalar libm avoids assuming an unqualified foreign complex ABI. */
+    double ninth_radius = pow(hypot(0.25, 0.40), 9.0);
+    double ninth_angle = 9.0 * atan2(0.40, 0.25);
+    double complex ninth_power = CMPLX(ninth_radius * cos(ninth_angle),
+                                      ninth_radius * sin(ninth_angle));
+    assert(near((1.0-q)*g, 1.0-ninth_power, 1e-12));
+    assert(near((1.0-1.0)*dirichlet_geometric(9,1), 0.0, 1e-14));
 
     assert(near(dirichlet_chi4_local_factor(3, 2), 0.9, 1e-13));
     assert(near(dirichlet_chi4_local_factor(2, 2), 1.0, 1e-13));

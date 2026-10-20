@@ -16,26 +16,30 @@ jobs:
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
+      - name: Prepare the declared ICK C frontend
+        id: ick
+        uses: isomorphisms/ai-ci/ick-host@903b2cb27ea572c9c6cb2ffa9f39e0fbf06ec9f8
       - name: Check exact finite-group generation, conductors, parity and orthogonality (C11)
         run: |
-          cc -std=c11 -O2 -Wall -Wextra -Werror -pedantic \
+          "${{ steps.ick.outputs.compiler }}" -fno-link-libatomic -std=c11 -O2 -Wall -Wextra -Werror -pedantic \
             code/characters.c code/dirichlet_eval.c tests/characters-host.c -lm \
             -o /tmp/dirichlet-characters-host
           /tmp/dirichlet-characters-host
       - name: Check independent CRT construction and orthogonality (JavaScript)
-        run: node --test tests/characters.test.mjs
+        run: node --test tests/characters.test.mjs tests/character-selection.test.mjs
       - name: Compare independent C11/JavaScript generated character values and finite sums/products
         run: |
-          cc -std=c11 -O2 -Wall -Wextra -Werror -pedantic \
+          "${{ steps.ick.outputs.compiler }}" -fno-link-libatomic -std=c11 -O2 -Wall -Wextra -Werror -pedantic \
             code/characters.c tests/characters-grid-cli.c -lm \
             -o /tmp/dirichlet-characters-grid
           node tests/characters-cpu-grid.mjs /tmp/dirichlet-characters-grid
       - name: Build standalone Linux x86_64 shared object and test the real C ABI
         run: |
-          cc -std=c11 -O2 -fPIC -shared -Wall -Wextra -Werror -pedantic \
+          "${{ steps.ick.outputs.compiler }}" -fno-link-libatomic -std=c11 -O2 -fPIC -shared -Wall -Wextra -Werror -pedantic \
             code/characters.c -lm -o /tmp/libdirichlet_characters.so
-          cc -std=c11 -O2 -Wall -Wextra -Werror -pedantic \
+          "${{ steps.ick.outputs.compiler }}" -fno-link-libatomic -std=c11 -O2 -Wall -Wextra -Werror -pedantic \
             tests/characters-dlopen.c -ldl -lm -o /tmp/dirichlet-characters-dlopen
           /tmp/dirichlet-characters-dlopen /tmp/libdirichlet_characters.so
           readelf -h /tmp/libdirichlet_characters.so | grep 'DYN (Shared object file)'
